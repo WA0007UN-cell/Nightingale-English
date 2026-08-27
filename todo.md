@@ -66,3 +66,9 @@
 - [x] Replace the login-page right panel with welcoming user-oriented copy.
 - [x] Verify the revised login page at desktop and mobile sizes.
 - [ ] Synchronize the approved login-page welcome update to GitHub.
+
+## Time-aware login greeting
+
+- [x] Add a browser-local Good morning, Good afternoon, or Good evening greeting to the login welcome panel.
+- [x] Add deterministic unit coverage for the greeting time boundaries.
+- [ ] Verify the login page after the greeting update and synchronize the approved change to GitHub.

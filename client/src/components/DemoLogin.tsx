@@ -7,6 +7,7 @@ import { ArrowRight, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { BrandMark } from "@/components/BrandMark";
 import { roleMeta, type DemoRole } from "@/lib/demoData";
+import { getTimeAwareGreeting } from "@/lib/greeting";
 
 const demoRoles: DemoRole[] = ["Clinician", "Staff", "Patient", "Admin"];
 
@@ -26,6 +27,7 @@ const roleInitials: Record<DemoRole, string> = {
 
 export function DemoLogin({ onSignIn }: { onSignIn: (role: DemoRole) => void }) {
   const [selectedRole, setSelectedRole] = useState<DemoRole>("Clinician");
+  const greeting = getTimeAwareGreeting(new Date().getHours());
 
   return (
     <main className="demo-login-shell">
@@ -73,8 +75,8 @@ export function DemoLogin({ onSignIn }: { onSignIn: (role: DemoRole) => void }) 
       </section>
       <aside className="demo-login-aside" aria-label="Welcome to Nightingale">
         <span className="aside-index">01</span>
-        <p className="eyebrow">WELCOME TO NIGHTINGALE</p>
-        <h2>Welcome to your care workspace.</h2>
+        <p className="eyebrow">{greeting} · NIGHTINGALE</p>
+        <h2>Your care workspace is ready.</h2>
         <p>Choose the role you are signing in with to open a focused view of your next actions and authorised care context.</p>
         <div className="aside-line" />
         <div className="welcome-preview"><small>YOU ARE ENTERING</small><strong>{roleMeta[selectedRole].shortLabel} workspace</strong><span>Focused context. A clear next step.</span></div>
