@@ -60,3 +60,9 @@
 - [ ] Review the Phase 1 files selected for GitHub sync.
 - [ ] Commit the reviewed Phase 1 source, tests, and design documentation.
 - [ ] Push the verified commit to the Nightingale-English repository.
+
+## P2-F01 — clinic role capability lookup
+
+- [x] Define the four clinic roles and their pure capability lookup without database or UI changes.
+- [x] Add focused Vitest coverage for permitted and denied role capabilities.
+- [x] Review only the P2-F01 source and test files before proposing its standalone commit.
