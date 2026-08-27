@@ -167,4 +167,4 @@ git push origin main
 
 ## Current recommended next request
 
-The first true Phase 2 user-visible slice should be **P2-F05 — Server workspace read path**. It proves that clinic scope is checked before data is returned. It must remain small: one protected server read procedure, one fixture-backed authorized request, one denied cross-clinic request, one test file, and a small “connected/persisted record” status in the existing workspace. It must not add Staff mutations, comments, versions, AI, or Phase 4 work.
+The next request should be **P2-F01 — Clinic role vocabulary**. It is the smallest possible Phase 2 slice: one shared capability definition and one focused test file. It has no screen change, no database mutation, and no external service. After the user reviews and confirms that test, it can receive its own commit. Only then should the project proceed to P2-F02 (database connection), P2-F03 (schema migration), P2-F04 (seed), and finally P2-F05 (the first protected server read path).
