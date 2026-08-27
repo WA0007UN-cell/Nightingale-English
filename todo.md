@@ -25,10 +25,19 @@
 
 ## Phase 2 planned scope
 
-- [ ] Add the independent English MySQL database and Drizzle schema.
-- [ ] Add server-side clinic scope and RBAC enforcement.
+- [x] Add the independent English MySQL database and Drizzle schema.
+- [x] Add server-side clinic scope and RBAC enforcement for the P2-F05 persisted workspace read path.
 - [ ] Add persistent comments, mentions, tasks, section versions, reverts, and audit logs.
 - [ ] Add optimistic concurrency using baseVersion.
+
+## P2-F02 to P2-F06 — clinic-scoped persisted workspace foundation
+
+- [x] Add a server-only Drizzle/MySQL connection module with clean close handling.
+- [x] Generate, review, apply, and validate a clinic-scoped migration for clinics, memberships, patients, entries, tasks, and audit events.
+- [x] Add an idempotent synthetic seed with fixed `.example.test` actors and one synthetic patient.
+- [x] Add a server read procedure that validates server session, role, clinic membership, patient scope, and entry visibility before returning workspace data.
+- [x] Connect the existing workspace to a non-sensitive persisted-foundation status and returned timestamp without replacing its Phase 1 UI.
+- [x] Cover role/scope denial, authorised reads, seed idempotency, and loading/success/error status states with automated tests.
 
 ## Phase 3 planned scope
 

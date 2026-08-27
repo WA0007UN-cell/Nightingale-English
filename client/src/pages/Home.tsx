@@ -26,6 +26,7 @@ import {
 import { BrandMark } from "@/components/BrandMark";
 import { DemoLogin } from "@/components/DemoLogin";
 import { GlanceCard } from "@/components/GlanceCard";
+import { PersistedFoundationStatus } from "@/components/PersistedFoundationStatus";
 import { TaskList } from "@/components/TaskList";
 import { TimelineEntry } from "@/components/TimelineEntry";
 import { getRoleCards, getRoleTasks, getRoleTimeline } from "@/lib/roleAccess";
@@ -175,6 +176,7 @@ export default function Home() {
           <div className="patient-banner-meta">
             <button className="date-button" type="button" onClick={() => showPlannedFeature("Date filtering")}><CalendarDays aria-hidden="true" size={16} /> 18 February 2026 <ChevronDown aria-hidden="true" size={14} /></button>
             <span className="data-disclosure">Prototype · Synthetic data only</span>
+            <PersistedFoundationStatus />
           </div>
         </section>
 
