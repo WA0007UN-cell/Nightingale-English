@@ -30,6 +30,12 @@
 - [ ] Add persistent comments, mentions, tasks, section versions, reverts, and audit logs.
 - [ ] Add optimistic concurrency using baseVersion.
 
+## P2-F01 — clinic role capability lookup
+
+- [x] Define the four clinic roles and their pure capability lookup without database or UI changes.
+- [x] Add focused Vitest coverage for permitted and denied role capabilities.
+- [x] Review only the P2-F01 source and test files before proposing its standalone commit.
+
 ## Phase 3 planned scope
 
 - [ ] Add server-side PHI redaction before any external model request.
