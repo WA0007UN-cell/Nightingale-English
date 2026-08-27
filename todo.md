@@ -46,3 +46,11 @@
 - [ ] Add NER/SLM placeholder mapping and protected re-identification.
 - [ ] Add event-driven priority projections and measure whether Redis is needed.
 - [ ] Add non-clinical semantic merge proposals with mandatory human confirmation.
+
+## Bad cases — role boundary and first-screen hierarchy
+
+- [x] Record the oversized patient identity header as a first-screen information-budget bad case.
+- [x] Record the in-workspace multi-role switcher as a role-boundary bad case; a signed-in user should have one active role.
+- [x] Move the signed-in role identity and sign-out action to the top-right header area.
+- [x] Reduce the patient identity header so Glance View is visible above the fold.
+- [x] Re-verify the mobile layout after moving identity controls to the top-right header.

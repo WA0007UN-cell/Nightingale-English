@@ -142,15 +142,9 @@ export default function Home() {
           })}
         </nav>
 
-        <div className="rail-footer">
-          <button className="rail-nav-item" type="button" onClick={() => showPlannedFeature("Support")}><HelpCircle aria-hidden="true" size={19} /><span>Support</span></button>
-          <div className="rail-divider" />
-          <button className="rail-user" type="button" aria-label="Sign out of current demo role" onClick={signOut}>
-            <span className="rail-user-avatar">{activeMember.initials}</span>
-            <span><strong>{activeMember.name}</strong><small>{activeMember.title}</small></span>
-            <LogOut aria-hidden="true" size={15} />
-          </button>
-        </div>
+          <div className="rail-footer">
+            <button className="rail-nav-item" type="button" onClick={() => showPlannedFeature("Support")}><HelpCircle aria-hidden="true" size={19} /><span>Support</span></button>
+          </div>
       </aside>
 
       <main className="care-workbench">
@@ -161,6 +155,11 @@ export default function Home() {
             <button className="header-icon-button" type="button" aria-label="Search" onClick={() => showPlannedFeature("Search")}><Search size={19} /></button>
             <button className="header-icon-button notification-button" type="button" aria-label="Notifications" onClick={() => showPlannedFeature("Notifications")}><Bell size={19} /><i /></button>
             <button className="header-icon-button" type="button" aria-label="Settings" onClick={() => showPlannedFeature("Settings")}><Settings2 size={19} /></button>
+            <button className="header-user-menu" type="button" aria-label={`Sign out as ${activeMember.name}`} onClick={signOut}>
+              <span className="header-user-avatar">{activeMember.initials}</span>
+              <span className="header-user-copy"><strong>{activeMember.name}</strong><small>{roleMeta[role].shortLabel}</small></span>
+              <LogOut aria-hidden="true" size={15} />
+            </button>
           </div>
         </header>
 
@@ -168,7 +167,7 @@ export default function Home() {
           <div className="patient-identity">
             <div className="patient-avatar" aria-label="Synthetic demo patient initials">{patient.initials}</div>
             <div>
-              <div className="patient-name-row"><h1>{patient.name}</h1><span>SYNTHETIC DEMO DATA</span></div>
+              <div className="patient-name-row"><h1 className="patient-name">{patient.name}</h1><span>SYNTHETIC DEMO DATA</span></div>
               <p>{patient.pronouns} · DOB {patient.dateOfBirth} · {patient.patientId}</p>
               <p className="patient-clinic"><ShieldCheck aria-hidden="true" size={14} /> {patient.clinic}</p>
             </div>
@@ -177,12 +176,6 @@ export default function Home() {
             <button className="date-button" type="button" onClick={() => showPlannedFeature("Date filtering")}><CalendarDays aria-hidden="true" size={16} /> 18 February 2026 <ChevronDown aria-hidden="true" size={14} /></button>
             <span className="data-disclosure">Prototype · Synthetic data only</span>
           </div>
-        </section>
-
-        <section className="session-strip" aria-label="Signed-in role context">
-          <span className="session-role-mark">{activeMember.initials}</span>
-          <div className="session-role-copy"><span>Signed in as</span><strong>{activeMember.name}</strong><small>{roleMeta[role].subtitle}</small></div>
-          <div className="session-role-actions"><span className="scope-badge">{roleMeta[role].shortLabel} view</span><button type="button" onClick={signOut}>Sign out</button></div>
         </section>
 
         <section className="glance-section" aria-labelledby="glance-title">
