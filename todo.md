@@ -25,10 +25,31 @@
 
 ## Phase 2 planned scope
 
-- [ ] Add the independent English MySQL database and Drizzle schema.
+- [x] Add the independent English MySQL database and Drizzle schema.
 - [ ] Add server-side clinic scope and RBAC enforcement.
 - [ ] Add persistent comments, mentions, tasks, section versions, reverts, and audit logs.
 - [ ] Add optimistic concurrency using baseVersion.
+
+## Phase 2 role-based feature slices
+
+- [ ] Foundation slice: persist synthetic clinics, memberships, patients, timeline entries, and role capabilities.
+- [ ] Add a minimal server read path that returns persisted clinic-scoped foundation data and verify it end-to-end.
+- [ ] Configure Vitest to run the new server and shared-domain authorization tests.
+- [ ] Staff slice: receive own assigned task, update its status, and create a clinician escalation with audit evidence.
+- [ ] Clinician slice: review the escalation, update one protected care-plan section with baseVersion, and inspect the version/audit trail.
+- [ ] Patient slice: retrieve only approved patient-visible context and no internal comments or system entries.
+- [ ] Admin slice: retrieve clinic-scoped governance and audit information without clinical write actions.
+- [ ] Run independent automated tests for every completed role slice before moving to the next slice.
+
+## Minimal component delivery rule
+
+- [ ] Deliver one smallest understandable component or vertical feature slice at a time, with a named user outcome.
+- [ ] For each slice, inspect the changed files, run focused tests, verify the visible result, and explain the next smallest step before expanding scope.
+- [ ] Use one meaningful Git commit per verified slice; do not create artificial history or bundle unrelated work.
+
+## Slice implementation guide
+
+- [x] Publish a numbered component-and-feature-slice guide with role, input, processing, output, validation, and commit boundaries.
 
 ## Phase 3 planned scope
 
@@ -72,3 +93,9 @@
 - [x] Add a browser-local Good morning, Good afternoon, or Good evening greeting to the login welcome panel.
 - [x] Add deterministic unit coverage for the greeting time boundaries.
 - [ ] Verify the login page after the greeting update and synchronize the approved change to GitHub.
+
+## Architecture alignment review
+
+- [ ] Map the proposed core, features, role-view, and shared-ui folders to current Nightingale modules and phases.
+- [ ] Document which domain logic must move to the server before Phase 2 rather than remain in the client.
+- [ ] Propose a staged directory refactor that preserves the working Phase 1 Demo.
