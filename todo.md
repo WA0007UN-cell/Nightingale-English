@@ -54,3 +54,15 @@
 - [x] Move the signed-in role identity and sign-out action to the top-right header area.
 - [x] Reduce the patient identity header so Glance View is visible above the fold.
 - [x] Re-verify the mobile layout after moving identity controls to the top-right header.
+
+## GitHub sync
+
+- [ ] Review the Phase 1 files selected for GitHub sync.
+- [ ] Commit the reviewed Phase 1 source, tests, and design documentation.
+- [ ] Push the verified commit to the Nightingale-English repository.
+
+## Login welcome content
+
+- [x] Replace the login-page right panel with welcoming user-oriented copy.
+- [x] Verify the revised login page at desktop and mobile sizes.
+- [ ] Synchronize the approved login-page welcome update to GitHub.

@@ -71,13 +71,13 @@ export function DemoLogin({ onSignIn }: { onSignIn: (role: DemoRole) => void }) 
           Enter {roleMeta[selectedRole].shortLabel} workspace <ArrowRight aria-hidden="true" size={17} />
         </button>
       </section>
-      <aside className="demo-login-aside" aria-label="Nightingale demo principles">
+      <aside className="demo-login-aside" aria-label="Welcome to Nightingale">
         <span className="aside-index">01</span>
-        <p className="eyebrow">ONE ROLE · ONE FOCUS</p>
-        <h2>Start with the action that matters.</h2>
-        <p>Glance View keeps the first decision visible, then lets each role follow its own evidence trail.</p>
+        <p className="eyebrow">WELCOME TO NIGHTINGALE</p>
+        <h2>Welcome to your care workspace.</h2>
+        <p>Choose the role you are signing in with to open a focused view of your next actions and authorised care context.</p>
         <div className="aside-line" />
-        <span className="aside-caption">Nightingale English · Phase 1</span>
+        <div className="welcome-preview"><small>YOU ARE ENTERING</small><strong>{roleMeta[selectedRole].shortLabel} workspace</strong><span>Focused context. A clear next step.</span></div>
       </aside>
     </main>
   );
