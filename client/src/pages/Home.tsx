@@ -15,6 +15,7 @@ import {
   HelpCircle,
   History,
   Home as HomeIcon,
+  LogOut,
   Menu,
   MessageSquareText,
   Search,
@@ -23,9 +24,11 @@ import {
   UsersRound,
 } from "lucide-react";
 import { BrandMark } from "@/components/BrandMark";
+import { DemoLogin } from "@/components/DemoLogin";
 import { GlanceCard } from "@/components/GlanceCard";
 import { TaskList } from "@/components/TaskList";
 import { TimelineEntry } from "@/components/TimelineEntry";
+import { getRoleCards, getRoleTasks, getRoleTimeline } from "@/lib/roleAccess";
 import { toast } from "sonner";
 import {
   glanceCards,
@@ -37,27 +40,58 @@ import {
   type DemoRole,
 } from "@/lib/demoData";
 
-const roles: DemoRole[] = ["Clinician", "Staff", "Patient", "Admin"];
+const roleNavItems: Record<DemoRole, { label: string; icon: typeof HomeIcon; active?: boolean }[]> = {
+  Clinician: [
+    { label: "Workspace", icon: HomeIcon, active: true },
+    { label: "Patients", icon: UsersRound },
+    { label: "Care notes", icon: FileText },
+    { label: "Team activity", icon: MessageSquareText },
+  ],
+  Staff: [
+    { label: "My workspace", icon: HomeIcon, active: true },
+    { label: "My tasks", icon: ClipboardCheck },
+    { label: "Patient updates", icon: MessageSquareText },
+    { label: "Team activity", icon: UsersRound },
+  ],
+  Patient: [
+    { label: "My care", icon: HomeIcon, active: true },
+    { label: "Shared plan", icon: FileText },
+    { label: "My updates", icon: MessageSquareText },
+  ],
+  Admin: [
+    { label: "Governance", icon: HomeIcon, active: true },
+    { label: "Audit", icon: History },
+    { label: "Access scope", icon: ShieldCheck },
+    { label: "Team activity", icon: UsersRound },
+  ],
+};
 
-const navItems = [
-  { label: "Workspace", icon: HomeIcon, active: true },
-  { label: "Patients", icon: UsersRound, active: false },
-  { label: "My tasks", icon: ClipboardCheck, active: false },
-  { label: "Care notes", icon: FileText, active: false },
-  { label: "Team activity", icon: MessageSquareText, active: false },
-  { label: "Audit", icon: History, active: false },
-];
+const roleMembers: Record<DemoRole, { name: string; initials: string; title: string }> = {
+  Clinician: { name: "Dr. Ravi Patel", initials: "RP", title: "Clinician" },
+  Staff: { name: "Nora Lewis", initials: "NL", title: "Staff" },
+  Patient: { name: "Maya Chen", initials: "MC", title: "Patient" },
+  Admin: { name: "Alex Morgan", initials: "AM", title: "Admin" },
+};
 
 export default function Home() {
-  const [role, setRole] = useState<DemoRole>("Clinician");
+  const [role, setRole] = useState<DemoRole | null>(null);
   const [focusedEntryId, setFocusedEntryId] = useState<string | null>(null);
 
-  const roleCards = useMemo(() => glanceCards.filter((card) => card.role === role), [role]);
+  const roleCards = useMemo(() => role ? getRoleCards(role, glanceCards) : [], [role]);
   const primaryCard = roleCards.find((card) => card.position === "primary");
   const secondaryCards = roleCards.filter((card) => card.position === "secondary");
-  const roleTasks = role === "Patient" ? tasks.filter((task) => task.status !== "WAITING") : tasks;
+  const visibleEntries = useMemo(() => role ? getRoleTimeline(role, timelineEntries) : [], [role]);
+  const roleTasks = role ? getRoleTasks(role, tasks) : [];
+  const activeMember = role ? roleMembers[role] : roleMembers.Clinician;
+  const activeSourceId = role === "Patient" ? "clinician-plan" : role === "Admin" ? "staff-escalation" : "ai-nurse-summary";
 
   function openSource(entryId: string) {
+    if (!visibleEntries.some((entry) => entry.id === entryId)) {
+      toast.warning("This source is not available for this role", {
+        description: "The workspace only opens evidence within the signed-in role's access scope.",
+      });
+      return;
+    }
     setFocusedEntryId(entryId);
     window.setTimeout(() => {
       document.getElementById(entryId)?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -67,12 +101,17 @@ export default function Home() {
     });
   }
 
-  function changeRole(nextRole: DemoRole) {
+  function signIn(nextRole: DemoRole) {
     setRole(nextRole);
     setFocusedEntryId(null);
-    toast.message(`Demo role: ${nextRole}`, {
-      description: "This visual role state changes content only. Server-enforced access is Phase 2 work.",
+    toast.message(`Signed in as ${roleMembers[nextRole].name}`, {
+      description: "This Phase 1 demo shows one role at a time. Server-enforced access follows in Phase 2.",
     });
+  }
+
+  function signOut() {
+    setRole(null);
+    setFocusedEntryId(null);
   }
 
   function showPlannedFeature(feature: string) {
@@ -80,6 +119,8 @@ export default function Home() {
       description: "This Phase 1 demo keeps the product flow visible; persistent workflows follow in Phase 2.",
     });
   }
+
+  if (!role) return <DemoLogin onSignIn={signIn} />;
 
   return (
     <div className="nightingale-shell">
@@ -90,7 +131,7 @@ export default function Home() {
         </div>
 
         <nav className="rail-navigation">
-          {navItems.map((item) => {
+          {roleNavItems[role].map((item) => {
             const Icon = item.icon;
             return (
               <button className={`rail-nav-item ${item.active ? "is-active" : ""}`} type="button" key={item.label} onClick={() => !item.active && showPlannedFeature(item.label)}>
@@ -104,10 +145,10 @@ export default function Home() {
         <div className="rail-footer">
           <button className="rail-nav-item" type="button" onClick={() => showPlannedFeature("Support")}><HelpCircle aria-hidden="true" size={19} /><span>Support</span></button>
           <div className="rail-divider" />
-          <button className="rail-user" type="button" aria-label="Open current user menu" onClick={() => showPlannedFeature("Account settings")}>
-            <span className="rail-user-avatar">RP</span>
-            <span><strong>Dr. Patel</strong><small>Clinician</small></span>
-            <ChevronDown aria-hidden="true" size={15} />
+          <button className="rail-user" type="button" aria-label="Sign out of current demo role" onClick={signOut}>
+            <span className="rail-user-avatar">{activeMember.initials}</span>
+            <span><strong>{activeMember.name}</strong><small>{activeMember.title}</small></span>
+            <LogOut aria-hidden="true" size={15} />
           </button>
         </div>
       </aside>
@@ -138,25 +179,10 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="role-switcher" aria-label="Role demonstration switcher">
-          <div className="role-switcher-intro">
-            <span>DEMO ROLE</span>
-            <strong>{roleMeta[role].label}</strong>
-            <p>{roleMeta[role].subtitle}</p>
-          </div>
-          <div className="role-options">
-            {roles.map((option) => (
-              <button
-                type="button"
-                key={option}
-                className={role === option ? "is-selected" : ""}
-                onClick={() => changeRole(option)}
-                aria-pressed={role === option}
-              >
-                {roleMeta[option].shortLabel}
-              </button>
-            ))}
-          </div>
+        <section className="session-strip" aria-label="Signed-in role context">
+          <span className="session-role-mark">{activeMember.initials}</span>
+          <div className="session-role-copy"><span>Signed in as</span><strong>{activeMember.name}</strong><small>{roleMeta[role].subtitle}</small></div>
+          <div className="session-role-actions"><span className="scope-badge">{roleMeta[role].shortLabel} view</span><button type="button" onClick={signOut}>Sign out</button></div>
         </section>
 
         <section className="glance-section" aria-labelledby="glance-title">
@@ -205,23 +231,30 @@ export default function Home() {
             </div>
             <p className="timeline-description">Every highlighted action points back to an authorised, timestamped record.</p>
             <div className="timeline-list">
-              {timelineEntries.map((entry) => <TimelineEntry key={entry.id} entry={entry} isFocused={entry.id === focusedEntryId} />)}
+              {visibleEntries.map((entry) => <TimelineEntry key={entry.id} entry={entry} isFocused={entry.id === focusedEntryId} />)}
             </div>
           </div>
 
           <aside className="context-rail" aria-label="Supporting care context">
             <section className="side-panel today-panel">
-              <div className="panel-heading compact"><div><p className="eyebrow">ACTIVE WORK</p><h2>Today&apos;s tasks</h2></div><span className="count-badge">{roleTasks.length}</span></div>
-              <TaskList tasks={roleTasks} onOpenTask={(task) => toast.message(task.title, { description: `${task.status} · ${task.assignee} · ${task.due}` })} />
-              <button className="side-panel-link" type="button" onClick={() => showPlannedFeature("Task board")}>Open task board <span>→</span></button>
+              <div className="panel-heading compact"><div><p className="eyebrow">{role === "Patient" ? "SHARED CARE" : role === "Admin" ? "GOVERNANCE" : "ACTIVE WORK"}</p><h2>{role === "Patient" ? "Your next steps" : role === "Admin" ? "Review queue" : "My tasks"}</h2></div><span className="count-badge">{roleTasks.length}</span></div>
+              {roleTasks.length > 0 ? (
+                <TaskList tasks={roleTasks} onOpenTask={(task) => toast.message(task.title, { description: `${task.status} · ${task.assignee} · ${task.due}` })} />
+              ) : (
+                <div className="task-empty">
+                  <strong>{role === "Patient" ? "No new shared steps" : "No open governance tasks"}</strong>
+                  <span>{role === "Patient" ? "Your care team will post approved actions here." : "Audit and access events are available in the governance area."}</span>
+                </div>
+              )}
+              <button className="side-panel-link" type="button" onClick={() => showPlannedFeature(role === "Patient" ? "Shared care plan" : role === "Admin" ? "Governance log" : "Task board")}>{role === "Patient" ? "Open shared plan" : role === "Admin" ? "Open governance log" : "Open task board"} <span>→</span></button>
             </section>
 
             <section className="side-panel evidence-panel">
               <div className="evidence-art" aria-hidden="true"><i /><b /><em /></div>
               <p className="eyebrow">TRACEABILITY</p>
-              <h3>Every recommendation carries its evidence.</h3>
-              <p>Open a source link to review the original entry, author and time before taking action.</p>
-              <button type="button" onClick={() => openSource("ai-nurse-summary")}>View linked source <span>→</span></button>
+              <h3>{role === "Patient" ? "Your shared plan carries its source." : "Every recommendation carries its evidence."}</h3>
+              <p>Open a source link to review the authorised entry, author and time before taking action.</p>
+              <button type="button" onClick={() => openSource(activeSourceId)}>View linked source <span>→</span></button>
             </section>
 
             <section className="side-panel phase-panel">
