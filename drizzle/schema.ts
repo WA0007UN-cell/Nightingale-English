@@ -73,6 +73,8 @@ export const careEntries = mysqlTable(
     authorUserId: int("authorUserId").references(() => users.id),
     authorRole: mysqlEnum("authorRole", ["Clinician", "Staff", "Patient", "System"]).notNull(),
     entryType: mysqlEnum("entryType", ["clinician", "staff", "escalation", "patient", "system", "ai"]).notNull(),
+    aiType: mysqlEnum("aiType", ["ai_doctor_consult_summary", "ai_nurse_consult_summary", "ai_patient_session_summary"]),
+    provenancePointer: varchar("provenancePointer", { length: 255 }),
     visibility: mysqlEnum("visibility", ["clinic", "patient"]).default("clinic").notNull(),
     reviewState: mysqlEnum("reviewState", ["not_required", "review_required", "reviewed", "resolved", "approved", "rejected"]).default("not_required").notNull(),
     content: text("content").notNull(),

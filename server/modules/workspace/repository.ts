@@ -15,7 +15,7 @@ export function createDbWorkspaceReader(database: ReturnType<typeof getDb>): Wor
       return patient;
     },
     async listEntries(clinicId, patientId) {
-      return database.select({ id: careEntries.id, clinicId: careEntries.clinicId, patientId: careEntries.patientId, authorRole: careEntries.authorRole, entryType: careEntries.entryType, visibility: careEntries.visibility, reviewState: careEntries.reviewState, content: careEntries.content, occurredAt: careEntries.occurredAt }).from(careEntries).where(and(eq(careEntries.clinicId, clinicId), eq(careEntries.patientId, patientId))).orderBy(asc(careEntries.occurredAt));
+      return database.select({ id: careEntries.id, clinicId: careEntries.clinicId, patientId: careEntries.patientId, authorRole: careEntries.authorRole, entryType: careEntries.entryType, aiType: careEntries.aiType, provenancePointer: careEntries.provenancePointer, visibility: careEntries.visibility, reviewState: careEntries.reviewState, content: careEntries.content, occurredAt: careEntries.occurredAt }).from(careEntries).where(and(eq(careEntries.clinicId, clinicId), eq(careEntries.patientId, patientId))).orderBy(asc(careEntries.occurredAt));
     },
     async listTasks(clinicId, patientId) {
       return database.select({ id: tasks.id, clinicId: tasks.clinicId, patientId: tasks.patientId, title: tasks.title, status: tasks.status, dueAt: tasks.dueAt }).from(tasks).where(and(eq(tasks.clinicId, clinicId), eq(tasks.patientId, patientId))).orderBy(asc(tasks.dueAt));
