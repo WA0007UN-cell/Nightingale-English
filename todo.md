@@ -112,3 +112,4 @@
 - [x] Remove the Phase 1 local-task fallback from the Staff panel and show only authorised persisted tasks or a clear session-required state.
 - [x] Verify visible Start/Complete buttons update the database and remain updated after a browser refresh.
 - [x] Preserve one deterministic open synthetic Staff task after the verification flow so the refreshed preview still exposes the real Start button.
+- [x] Make the Staff development preview create its synthetic server session automatically when entering the Staff workspace, without exposing that behavior in production.

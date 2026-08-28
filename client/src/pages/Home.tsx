@@ -103,7 +103,17 @@ export default function Home() {
     });
   }
 
-  function signIn(nextRole: DemoRole) {
+  async function signIn(nextRole: DemoRole) {
+    if (nextRole === "Staff" && import.meta.env.DEV) {
+      try {
+        const response = await fetch("/api/dev/staff-session", { method: "POST", credentials: "include" });
+        if (!response.ok) throw new Error("The synthetic Staff session could not be created.");
+      } catch {
+        toast.error("Could not open the synthetic Staff session", {
+          description: "Database tasks stay protected until a valid Staff session is available.",
+        });
+      }
+    }
     setRole(nextRole);
     setFocusedEntryId(null);
     toast.message(`Signed in as ${roleMembers[nextRole].name}`, {
