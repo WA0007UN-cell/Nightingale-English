@@ -30,6 +30,7 @@ import { PersistedFoundationStatus } from "@/components/PersistedFoundationStatu
 import { CarePlanEditor } from "@/components/clinician/CarePlanEditor";
 import { ReviewQueue } from "@/components/clinician/ReviewQueue";
 import { AssignedTaskList } from "@/components/staff/AssignedTaskList";
+import { AuditEventDrawer } from "@/components/admin/AuditEventDrawer";
 import { EscalationComposer } from "@/components/staff/EscalationComposer";
 import { PatientNextSteps } from "@/components/patient/PatientNextSteps";
 import { TaskList } from "@/components/TaskList";
@@ -334,7 +335,7 @@ export default function Home() {
                   <span>Audit and access events are available in the governance area.</span>
                 </div>
               )}
-              <button className="side-panel-link" type="button" onClick={() => showPlannedFeature("Governance log")}>Open governance log <span>→</span></button>
+              <AuditEventDrawer clinicId={1} />
             </section> : null}
 
           </aside>

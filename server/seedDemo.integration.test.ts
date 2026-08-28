@@ -10,7 +10,7 @@ let admin: mysql.Pool;
 let testDb: mysql.Pool;
 let seedModule: SeedModule;
 
-describe.sequential("synthetic Foundation seed integration", () => {
+describe.skipIf(!originalDatabaseUrl).sequential("synthetic Foundation seed integration", () => {
   beforeAll(async () => {
     if (!originalDatabaseUrl) throw new Error("DATABASE_URL is required for the isolated seed integration test.");
 

@@ -6,6 +6,7 @@ import { carePlanRouter } from "./modules/carePlan/router";
 import { workspaceRouter } from "./modules/workspace/router";
 import { tasksRouter } from "./modules/tasks/router";
 import { patientRouter } from "./modules/patient/router";
+import { auditRouter } from "./modules/audit/router";
 import { publicProcedure, router } from "./trpc";
 
 /** This non-sensitive status proves persistence is reachable without returning patient records. */
@@ -22,5 +23,6 @@ export const appRouter = router({
   escalations: escalationsRouter,
   carePlan: carePlanRouter,
   patient: patientRouter,
+  audit: auditRouter,
 });
 export type AppRouter = typeof appRouter;
