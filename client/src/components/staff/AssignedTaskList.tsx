@@ -10,6 +10,7 @@ function formatDueAt(value: Date | null) {
 export function AssignedTaskList() {
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const utils = trpc.useUtils();
   const result = trpc.tasks.assigned.useQuery(undefined, { retry: false, refetchOnWindowFocus: false });
 
   async function enterSyntheticStaffSession() {
@@ -18,7 +19,8 @@ export function AssignedTaskList() {
     try {
       const response = await fetch("/api/dev/staff-session", { method: "POST" });
       if (!response.ok) throw new Error("The synthetic Staff session could not be created.");
-      window.location.reload();
+      await utils.tasks.assigned.invalidate();
+      setIsSigningIn(false);
     } catch (error) {
       setPreviewError(error instanceof Error ? error.message : "The synthetic Staff session could not be created.");
       setIsSigningIn(false);
@@ -32,7 +34,7 @@ export function AssignedTaskList() {
       <>
         <div className="staff-task-notice"><ShieldAlert aria-hidden="true" size={14} /><span>Server Staff session required to load assigned database tasks.</span></div>
         {previewError ? <div className="staff-task-error" role="alert">{previewError}</div> : null}
-        {import.meta.env.DEV ? <button className="staff-preview-session-button" type="button" onClick={enterSyntheticStaffSession} disabled={isSigningIn}>{isSigningIn ? "Opening synthetic Staff session…" : "Preview persisted Staff tasks"}</button> : null}
+        {import.meta.env.DEV ? <button className="staff-preview-session-button" type="button" onClick={enterSyntheticStaffSession} disabled={isSigningIn}>{isSigningIn ? "Loading database tasks…" : "Use synthetic Staff preview to load database tasks"}</button> : null}
       </>
     );
   }

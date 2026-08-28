@@ -113,3 +113,4 @@
 - [x] Verify visible Start/Complete buttons update the database and remain updated after a browser refresh.
 - [x] Preserve one deterministic open synthetic Staff task after the verification flow so the refreshed preview still exposes the real Start button.
 - [x] Make the Staff development preview create its synthetic server session automatically when entering the Staff workspace, without exposing that behavior in production.
+- [x] Replace the unreliable automatic Staff preview session with an explicit development-only session button that refetches persisted tasks in place.
