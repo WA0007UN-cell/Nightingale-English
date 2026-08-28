@@ -148,9 +148,7 @@ export default function Home() {
   function signIn(nextRole: DemoRole) {
     setRole(nextRole);
     setFocusedEntryId(null);
-    toast.message(`Signed in as ${roleMembers[nextRole].name}`, {
-      description: "Role selection is a visual demo. Server-enforced workflows are introduced incrementally in Phase 2.",
-    });
+    toast.message(`Signed in as ${roleMembers[nextRole].name}`);
   }
 
   function signOut() {

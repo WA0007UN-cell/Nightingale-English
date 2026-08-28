@@ -3,20 +3,13 @@
  * instead of exposing a role switcher inside the patient workspace. This is a
  * visual demo boundary; server-enforced workflows are introduced incrementally in Phase 2.
  */
-import { ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { BrandMark } from "@/components/BrandMark";
 import { roleMeta, type DemoRole } from "@/lib/demoData";
 import { getTimeAwareGreeting } from "@/lib/greeting";
 
 const demoRoles: DemoRole[] = ["Clinician", "Staff", "Patient", "Admin"];
-
-const roleDescriptions: Record<DemoRole, string> = {
-  Clinician: "Review clinical signals, resolve care-plan questions, and own decisions.",
-  Staff: "Work through assigned follow-up, patient updates, and team coordination.",
-  Patient: "See approved next steps and the care context shared with you.",
-  Admin: "Review governance signals and operational traceability without clinical actions.",
-};
 
 const roleInitials: Record<DemoRole, string> = {
   Clinician: "RP",
@@ -57,7 +50,6 @@ export function DemoLogin({ onSignIn }: { onSignIn: (role: DemoRole) => void }) 
                 <span className="demo-role-avatar">{roleInitials[role]}</span>
                 <span className="demo-role-copy">
                   <strong>{roleMeta[role].shortLabel}</strong>
-                  <small>{roleDescriptions[role]}</small>
                 </span>
                 <span className="demo-role-check" aria-hidden="true">{isSelected ? "✓" : ""}</span>
               </button>
@@ -65,10 +57,6 @@ export function DemoLogin({ onSignIn }: { onSignIn: (role: DemoRole) => void }) 
           })}
         </div>
 
-        <div className="demo-login-note">
-          <ShieldCheck aria-hidden="true" size={17} />
-          <span>Role selection is a visual demo. Server-enforced workflows are introduced incrementally in Phase 2.</span>
-        </div>
         <button className="demo-login-submit" type="button" onClick={() => onSignIn(selectedRole)}>
           Enter {roleMeta[selectedRole].shortLabel} workspace <ArrowRight aria-hidden="true" size={17} />
         </button>

@@ -153,3 +153,9 @@
 - [x] Fix the visible Clinician preview session action so it establishes the development auth context without console intervention, then re-run all Clinician browser checks.
 - [x] Confirm the visible review queue supports review_required → reviewed → resolved and refreshes after both actions.
 - [x] Record the baseVersion mismatch as automated-server coverage unless a safe, deterministic browser conflict demonstration is introduced.
+
+## Login role-copy cleanup
+
+- [x] Remove role-specific action descriptions beneath each login role without changing role selection behaviour.
+- [x] Remove the visible “Role selection is a visual demo...” notice from the login page.
+- [x] Verify the login page copy cleanup with focused tests, TypeScript check, production build, and a browser preview.
