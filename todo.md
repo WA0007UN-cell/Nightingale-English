@@ -141,6 +141,7 @@
 - [x] Keep Glance View readable and retain the lower Timeline as the evidence/detail layer after the role action area is promoted.
 - [x] Verify Clinician and Staff first-screen action layout in an actual mobile viewport, then save a dedicated review checkpoint.
 - [x] Use and remove a temporary development-only visual role state for mobile layout verification without granting a server session.
+- [x] Reorder Clinician/Staff layout so Glance View remains above role action panels, without adding dependencies or changing server workflows.
 
 ## Phase 2 Clinician role — review queue and versioned Care Plan
 

@@ -223,6 +223,34 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="glance-section" aria-labelledby="glance-title">
+          <div className="section-heading-row">
+            <div>
+              <p className="eyebrow">PRIORITISED CONTEXT</p>
+              <h2 id="glance-title">Glance View</h2>
+              <p className="section-helper">One action, one reason, one traceable source.</p>
+            </div>
+            <button type="button" className="quiet-button" onClick={() => toast.message("Priority explanation", { description: primaryCard?.scoreExplanation ?? "Patient and Admin views do not show internal risk scoring." })}><BookOpenText aria-hidden="true" size={16} /> How this is prioritised</button>
+          </div>
+
+          {primaryCard && (
+            <div className="glance-layout">
+              <GlanceCard card={primaryCard} primary onOpenSource={openSource} />
+              <div className="secondary-card-stack">
+                {secondaryCards.map((card) => <GlanceCard key={card.id} card={card} onOpenSource={openSource} />)}
+              </div>
+            </div>
+          )}
+
+          {primaryCard && primaryCard.overflowCount > 0 && (
+            <button type="button" className="overflow-context" onClick={() => openSource("staff-escalation")}>
+              <span className="overflow-plus">+</span>
+              <span><strong>{primaryCard.overflowCount} additional prioritised items</strong><small>Open the Timeline to review more context</small></span>
+              <ChevronDown aria-hidden="true" size={18} />
+            </button>
+          )}
+        </section>
+
         {role === "Staff" ? (
           <section className="role-action-section staff-action-section" aria-labelledby="staff-actions-title">
             <div className="role-action-heading">
@@ -261,34 +289,6 @@ export default function Home() {
             </div>
           </section>
         ) : null}
-
-        <section className="glance-section" aria-labelledby="glance-title">
-          <div className="section-heading-row">
-            <div>
-              <p className="eyebrow">PRIORITISED CONTEXT</p>
-              <h2 id="glance-title">Glance View</h2>
-              <p className="section-helper">One action, one reason, one traceable source.</p>
-            </div>
-            <button type="button" className="quiet-button" onClick={() => toast.message("Priority explanation", { description: primaryCard?.scoreExplanation ?? "Patient and Admin views do not show internal risk scoring." })}><BookOpenText aria-hidden="true" size={16} /> How this is prioritised</button>
-          </div>
-
-          {primaryCard && (
-            <div className="glance-layout">
-              <GlanceCard card={primaryCard} primary onOpenSource={openSource} />
-              <div className="secondary-card-stack">
-                {secondaryCards.map((card) => <GlanceCard key={card.id} card={card} onOpenSource={openSource} />)}
-              </div>
-            </div>
-          )}
-
-          {primaryCard && primaryCard.overflowCount > 0 && (
-            <button type="button" className="overflow-context" onClick={() => openSource("staff-escalation")}>
-              <span className="overflow-plus">+</span>
-              <span><strong>{primaryCard.overflowCount} additional prioritised items</strong><small>Open the Timeline to review more context</small></span>
-              <ChevronDown aria-hidden="true" size={18} />
-            </button>
-          )}
-        </section>
 
         <section className="context-strip" aria-label="Patient care context">
           {patientContext.map((item) => (
