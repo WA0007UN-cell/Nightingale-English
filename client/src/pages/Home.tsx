@@ -122,7 +122,6 @@ export default function Home() {
   const timelineEntriesForRole = useMemo(() => [...visibleEntries, ...persistedSourceTimelineEntries], [visibleEntries, persistedSourceTimelineEntries]);
   const roleTasks = role ? getRoleTasks(role, tasks) : [];
   const activeMember = role ? roleMembers[role] : roleMembers.Clinician;
-  const activeSourceId = role === "Patient" ? "clinician-plan" : role === "Admin" ? "staff-escalation" : "ai-nurse-summary";
 
   function openSource(entryId: string) {
     if (!timelineEntriesForRole.some((entry) => entry.id === entryId)) {
@@ -295,14 +294,6 @@ export default function Home() {
                 </div>
               )}
               <button className="side-panel-link" type="button" onClick={() => showPlannedFeature(role === "Patient" ? "Shared care plan" : role === "Admin" ? "Governance log" : "Task board")}>{role === "Patient" ? "Open shared plan" : role === "Admin" ? "Open governance log" : "Open task board"} <span>→</span></button>
-            </section>
-
-            <section className="side-panel evidence-panel">
-              <div className="evidence-art" aria-hidden="true"><i /><b /><em /></div>
-              <p className="eyebrow">TRACEABILITY</p>
-              <h3>{role === "Patient" ? "Your shared plan carries its source." : "Every recommendation carries its evidence."}</h3>
-              <p>Open a source link to review the authorised entry, author and time before taking action.</p>
-              <button type="button" onClick={() => openSource(activeSourceId)}>View linked source <span>→</span></button>
             </section>
 
             <section className="side-panel phase-panel">
