@@ -1,0 +1,1 @@
+ALTER TABLE `careEntries` MODIFY COLUMN `entryType` enum('clinician','staff','escalation','patient','system','ai') NOT NULL;

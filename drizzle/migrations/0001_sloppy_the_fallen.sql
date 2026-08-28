@@ -1,0 +1,3 @@
+ALTER TABLE `careEntries` ADD `sourceEntryId` int;--> statement-breakpoint
+ALTER TABLE `careEntries` ADD CONSTRAINT `careEntries_sourceEntryId_careEntries_id_fk` FOREIGN KEY (`sourceEntryId`) REFERENCES `careEntries`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX `care_entries_clinic_patient_source_index` ON `careEntries` (`clinicId`,`patientId`,`sourceEntryId`);

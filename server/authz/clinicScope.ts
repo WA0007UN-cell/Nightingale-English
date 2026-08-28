@@ -69,3 +69,31 @@ export function assertAllowedTaskTransition(current: StaffTaskScope["status"], n
   if ((current === "open" && next === "in_progress") || (current === "in_progress" && next === "complete")) return;
   throw new ClinicScopeError(`Task transition ${current} → ${next} is not allowed.`);
 }
+
+export type StaffEscalationSourceScope = {
+  id: number;
+  clinicId: number;
+  patientId: number;
+  entryType: "clinician" | "staff" | "escalation" | "patient" | "system" | "ai";
+};
+
+/** Ensures an escalation is authored by Staff against a patient and Timeline entry in the same clinic. */
+export function assertStaffCanCreateEscalation(input: {
+  membership: ClinicMembership | undefined;
+  actorUserId: number;
+  clinicId: number;
+  patient: ScopedPatient | undefined;
+  sourceEntry: StaffEscalationSourceScope | undefined;
+}) {
+  const { membership, actorUserId, clinicId, patient, sourceEntry } = input;
+  if (!membership || membership.userId !== actorUserId || membership.clinicId !== clinicId || membership.role !== "Staff") {
+    throw new ClinicScopeError("Only a Staff member of this clinic may create an escalation.");
+  }
+  if (!patient || patient.clinicId !== clinicId || !sourceEntry || sourceEntry.clinicId !== clinicId || sourceEntry.patientId !== patient.id) {
+    throw new ClinicScopeError("The escalation patient or source entry is outside the Staff member's clinic scope.");
+  }
+  if (sourceEntry.entryType === "escalation") {
+    throw new ClinicScopeError("An escalation must link to an authorised Timeline source entry, not another escalation.");
+  }
+  return membership;
+}

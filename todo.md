@@ -118,3 +118,13 @@
 - [x] Replace the preview cookie dependency with a short-lived server-signed synthetic Staff token carried only by the current development browser tab; production rejects it.
 - [x] Diagnose the Staff preview `Failed to fetch` error across database schema, synthetic seed, server route, and frontend request layers.
 - [x] Repair the preview session connection layer and verify the Staff preview loads persisted tasks without a fetch error.
+
+## Phase 2 Staff role — escalation and source linking
+
+- [x] P2-S03: Add a server-authorised Staff synthetic escalation creation path with non-empty validation, clinic/patient scope enforcement, and audit logging.
+- [x] P2-S04: Persist a source entry reference on each Staff escalation and let Staff navigate to the authorised Timeline source entry with visual focus.
+- [x] Keep internal escalations and their source records inaccessible to the Patient role.
+- [ ] Run the complete test suite, final file audit, and user-specified GitHub commit/push for P2-S03/P2-S04.
+- [x] Update the isolated migration/seed integration test to replay every generated migration in order, including P2-S04 schema changes.
+- [x] Wire escalation source navigation into the existing main Timeline focus/scroll state rather than a parallel persisted-source list.
+- [x] Add patient-flow coverage proving clinic-only internal escalations and clinic-only sources are absent from Patient-visible data.

@@ -26,7 +26,10 @@ export function AssignedTaskList() {
       const body = (await response.json()) as PreviewSessionResponse;
       if (!body.ok || !body.previewToken) throw new Error("The synthetic Staff preview token could not be created.");
       window.sessionStorage.setItem(STAFF_PREVIEW_TOKEN_KEY, body.previewToken);
-      await utils.tasks.assigned.invalidate();
+      await Promise.all([
+        utils.tasks.assigned.invalidate(),
+        utils.escalations.context.invalidate({ patientId: 90001 }),
+      ]);
       setIsSigningIn(false);
     } catch (error) {
       setPreviewError(error instanceof Error ? error.message : "The synthetic Staff session could not be created.");

@@ -20,9 +20,13 @@ describe.sequential("synthetic Foundation seed integration", () => {
     isolatedUrl.pathname = `/${schemaName}`;
     testDb = mysql.createPool({ uri: isolatedUrl.toString() });
 
-    const sql = await fs.readFile(new URL("../drizzle/migrations/0000_funny_rick_jones.sql", import.meta.url), "utf8");
-    for (const statement of sql.split("--> statement-breakpoint").map((part) => part.trim()).filter(Boolean)) {
-      await testDb.query(statement);
+    const migrationDirectory = new URL("../drizzle/migrations/", import.meta.url);
+    const migrationFiles = (await fs.readdir(migrationDirectory)).filter((file) => file.endsWith(".sql")).sort();
+    for (const migrationFile of migrationFiles) {
+      const sql = await fs.readFile(new URL(`../drizzle/migrations/${migrationFile}`, import.meta.url), "utf8");
+      for (const statement of sql.split("--> statement-breakpoint").map((part) => part.trim()).filter(Boolean)) {
+        await testDb.query(statement);
+      }
     }
 
     process.env.DATABASE_URL = isolatedUrl.toString();

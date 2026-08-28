@@ -8,6 +8,20 @@
       "when": 1787865195499,
       "tag": "0000_funny_rick_jones",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1787888366427,
+      "tag": "0001_sloppy_the_fallen",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1787888504875,
+      "tag": "0002_robust_nebula",
+      "breakpoints": true
     }
   ]
 }

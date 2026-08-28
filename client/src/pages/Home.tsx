@@ -28,9 +28,11 @@ import { DemoLogin } from "@/components/DemoLogin";
 import { GlanceCard } from "@/components/GlanceCard";
 import { PersistedFoundationStatus } from "@/components/PersistedFoundationStatus";
 import { AssignedTaskList } from "@/components/staff/AssignedTaskList";
+import { EscalationComposer } from "@/components/staff/EscalationComposer";
 import { TaskList } from "@/components/TaskList";
 import { TimelineEntry } from "@/components/TimelineEntry";
 import { getRoleCards, getRoleTasks, getRoleTimeline } from "@/lib/roleAccess";
+import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import {
   glanceCards,
@@ -40,6 +42,7 @@ import {
   tasks,
   timelineEntries,
   type DemoRole,
+  type TimelineEntry as TimelineEntryModel,
 } from "@/lib/demoData";
 
 const roleNavItems: Record<DemoRole, { label: string; icon: typeof HomeIcon; active?: boolean }[]> = {
@@ -75,20 +78,54 @@ const roleMembers: Record<DemoRole, { name: string; initials: string; title: str
   Admin: { name: "Alex Morgan", initials: "AM", title: "Admin" },
 };
 
+function toTimelineType(entryType: string): TimelineEntryModel["type"] {
+  if (entryType === "clinician") return "clinician";
+  if (entryType === "patient") return "patient";
+  if (entryType === "staff") return "staff";
+  return "system";
+}
+
+function sourceAuthor(role: string) {
+  if (role === "Clinician") return "Dr. Ravi Patel";
+  if (role === "Staff") return "Nora Lewis";
+  if (role === "Patient") return "Maya Chen";
+  return "Nightingale system";
+}
+
 export default function Home() {
   const [role, setRole] = useState<DemoRole | null>(null);
   const [focusedEntryId, setFocusedEntryId] = useState<string | null>(null);
+  const staffEscalationContext = trpc.escalations.context.useQuery(
+    { patientId: 90001 },
+    { enabled: role === "Staff", retry: false, refetchOnWindowFocus: false },
+  );
 
   const roleCards = useMemo(() => role ? getRoleCards(role, glanceCards) : [], [role]);
   const primaryCard = roleCards.find((card) => card.position === "primary");
   const secondaryCards = roleCards.filter((card) => card.position === "secondary");
   const visibleEntries = useMemo(() => role ? getRoleTimeline(role, timelineEntries) : [], [role]);
+  const persistedSourceTimelineEntries = useMemo<TimelineEntryModel[]>(() => {
+    if (role !== "Staff") return [];
+    return (staffEscalationContext.data?.sourceEntries ?? []).map((entry) => ({
+      id: `persisted-source-${entry.id}`,
+      type: toTimelineType(entry.entryType),
+      author: sourceAuthor(entry.authorRole),
+      roleLabel: `${entry.authorRole.toUpperCase()} · PERSISTED SOURCE`,
+      date: new Date(entry.occurredAt).toLocaleDateString(),
+      time: new Date(entry.occurredAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      title: `Authorised ${entry.entryType} source`,
+      content: entry.content,
+      tags: ["PERSISTED", "SOURCE"],
+      sourceHint: `Database source #${entry.id} · Authorised for Staff clinic scope`,
+    }));
+  }, [role, staffEscalationContext.data]);
+  const timelineEntriesForRole = useMemo(() => [...visibleEntries, ...persistedSourceTimelineEntries], [visibleEntries, persistedSourceTimelineEntries]);
   const roleTasks = role ? getRoleTasks(role, tasks) : [];
   const activeMember = role ? roleMembers[role] : roleMembers.Clinician;
   const activeSourceId = role === "Patient" ? "clinician-plan" : role === "Admin" ? "staff-escalation" : "ai-nurse-summary";
 
   function openSource(entryId: string) {
-    if (!visibleEntries.some((entry) => entry.id === entryId)) {
+    if (!timelineEntriesForRole.some((entry) => entry.id === entryId)) {
       toast.warning("This source is not available for this role", {
         description: "The workspace only opens evidence within the signed-in role's access scope.",
       });
@@ -101,6 +138,10 @@ export default function Home() {
     toast.success("Opened linked evidence", {
       description: "The highlighted Timeline entry is the traceable source for this action.",
     });
+  }
+
+  function openPersistedSource(sourceEntryId: number) {
+    openSource(`persisted-source-${sourceEntryId}`);
   }
 
   function signIn(nextRole: DemoRole) {
@@ -227,8 +268,17 @@ export default function Home() {
             </div>
             <p className="timeline-description">Every highlighted action points back to an authorised, timestamped record.</p>
             <div className="timeline-list">
-              {visibleEntries.map((entry) => <TimelineEntry key={entry.id} entry={entry} isFocused={entry.id === focusedEntryId} />)}
+              {timelineEntriesForRole.map((entry) => <TimelineEntry key={entry.id} entry={entry} isFocused={entry.id === focusedEntryId} />)}
             </div>
+            {role === "Staff" ? (
+              <EscalationComposer
+                patientId={90001}
+                context={staffEscalationContext.data}
+                isLoading={staffEscalationContext.isLoading}
+                errorMessage={staffEscalationContext.error?.message}
+                onOpenSource={openPersistedSource}
+              />
+            ) : null}
           </div>
 
           <aside className="context-rail" aria-label="Supporting care context">
