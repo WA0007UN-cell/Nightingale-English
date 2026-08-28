@@ -159,3 +159,11 @@
 - [x] Remove role-specific action descriptions beneath each login role without changing role selection behaviour.
 - [x] Remove the visible “Role selection is a visual demo...” notice from the login page.
 - [x] Verify the login page copy cleanup with focused tests, TypeScript check, production build, and a browser preview.
+
+## Phase 2 Patient/Admin privacy and governance wrap-up
+
+- [ ] P2-P01/P2-P02: Return only patient-visible approved entries and explicit next steps to Patient, omitting internal notes, escalations, unapproved AI outputs, and risk scores at the server boundary.
+- [ ] P2-A01/P2-A02: Add an Admin-only, clinic-scoped governance summary and audit-event detail drawer limited to immutable, non-clinical metadata.
+- [ ] Add focused tests for Patient response redaction, Admin governance metadata redaction, four-role access boundaries, and cross-clinic 403 denials.
+- [ ] Verify Patient and Admin interface flows in the browser without displaying protected content.
+- [ ] Run the full regression suite, TypeScript check, production build, file audit, requested Git commit, and GitHub push for P2-P01 through P2-A02.
