@@ -135,6 +135,21 @@ button:focus-visible { outline: 3px solid rgba(67, 169, 232, 0.42); outline-offs
 
 .section-heading-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin-bottom: 17px; }.eyebrow { margin: 0 0 5px; color: #8090ae; font-size: 10px; font-weight: 800; letter-spacing: 1.15px; }.section-heading-row h2, .panel-heading h2 { margin: 0; color: var(--nightingale-ink); font-family: "Manrope", sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -.75px; }.section-helper { margin: 5px 0 0; color: #727e97; font-size: 12px; font-weight: 500; }.quiet-button, .filter-button { display: inline-flex; gap: 7px; align-items: center; padding: 8px 10px; color: #62708c; background: rgba(255,255,255,.78); border-radius: 9px; box-shadow: none; font-size: 11px; font-weight: 700; transition: color .15s var(--ease-out), transform .15s var(--ease-out); }.quiet-button:hover, .filter-button:hover { color: var(--nightingale-sky-deep); }.quiet-button:active, .filter-button:active { transform: scale(.97); }
 
+.glance-category-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: start; }
+.glance-category-panel { min-width: 0; padding: 15px; border: 1px solid #e7edf5; border-radius: 17px; background: rgba(255,255,255,.78); box-shadow: 0 5px 15px rgba(44,54,102,.035); }
+.glance-category-panel.is-content { border-top: 3px solid #55afd9; }
+.glance-category-panel.is-actions { border-top: 3px solid #d0a04a; }
+.glance-category-panel.is-risk { border-top: 3px solid #df657c; }
+.glance-category-heading { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; min-height: 53px; }
+.glance-category-heading h3 { margin: 0; color: #34425f; font-size: 12px; font-weight: 850; letter-spacing: .03em; }
+.glance-category-heading p { margin: 5px 0 0; color: #8994a9; font-size: 10px; line-height: 1.35; }
+.glance-category-heading > span { display: grid; width: 23px; height: 23px; flex: 0 0 23px; place-items: center; color: #68748d; border-radius: 7px; background: #f0f3f8; font-size: 10px; font-weight: 800; }
+.glance-category-cards { display: grid; gap: 10px; }
+.glance-category-cards .glance-card { min-height: 175px; }
+.glance-category-cards .glance-card-primary { min-height: 175px; }
+.glance-category-empty { margin: 12px 0 8px; color: #9aa4b6; font-size: 11px; }
+.glance-category-grid .glance-card-topline { flex-wrap: wrap; }
+.glance-category-grid .attention-score { display: none; }
 .glance-layout { display: grid; grid-template-columns: minmax(0,1.56fr) minmax(310px,.9fr); gap: 15px; }.glance-card { position: relative; display: flex; flex-direction: column; overflow: hidden; border-radius: 20px; transition: transform .18s var(--ease-out), box-shadow .18s var(--ease-out); }.glance-card:hover { transform: translateY(-2px); }.glance-card-primary { min-height: 253px; padding: 21px 23px; color: #fff; background: linear-gradient(118deg,#2e9cdc,#54b7ee 58%,#55afe7); box-shadow: 0 15px 31px rgba(54,152,216,.2); }.glance-card-primary::after { content: ""; position: absolute; top: -92px; right: -80px; width: 300px; height: 300px; pointer-events: none; border: 1px solid rgba(255,255,255,.25); border-radius: 50%; box-shadow: 0 0 0 32px rgba(255,255,255,.06),0 0 0 68px rgba(255,255,255,.045); }.glance-card-primary::before { content: ""; position: absolute; right: 73px; bottom: 42px; width: 70px; height: 1px; background: linear-gradient(90deg,rgba(255,255,255,.12),rgba(255,255,255,.84)); transform: rotate(-22deg); }.glance-card-secondary { min-height: 119px; padding: 15px 17px; border: 1px solid #edf0f7; background: #fff; box-shadow: 0 4px 13px rgba(44,54,102,.04); }.secondary-card-stack { display: grid; gap: 15px; }
 .glance-category-label { display: inline-flex; width: max-content; padding: 4px 6px; border-radius: 6px; font-size: 8px; font-weight: 850; letter-spacing: .06em; }
 .glance-category-label.is-content { color: #347fa7; background: #eaf7fd; }
@@ -226,4 +241,5 @@ button:focus-visible { outline: 3px solid rgba(67, 169, 232, 0.42); outline-offs
 .spin { animation: audit-spin 1s linear infinite; }
 @keyframes audit-drawer-in { from { transform: translateX(24px); opacity: .5; } to { transform: translateX(0); opacity: 1; } }
 @keyframes audit-spin { to { transform: rotate(360deg); } }
+@media (max-width: 980px) { .glance-category-grid { grid-template-columns: 1fr; } }
 @media (max-width: 560px) { .audit-drawer { padding: 22px 18px; } .audit-event-top { display: grid; gap: 5px; } .audit-event dl { grid-template-columns: 1fr; } }

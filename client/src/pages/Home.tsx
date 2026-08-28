@@ -36,7 +36,7 @@ import { EscalationComposer } from "@/components/staff/EscalationComposer";
 import { PatientNextSteps } from "@/components/patient/PatientNextSteps";
 import { TaskList } from "@/components/TaskList";
 import { TimelineEntry } from "@/components/TimelineEntry";
-import { getRoleCards, getRoleTasks, getRoleTimeline } from "@/lib/roleAccess";
+import { getGlanceCategory, getRoleCards, getRoleTasks, getRoleTimeline } from "@/lib/roleAccess";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import {
@@ -107,7 +107,11 @@ export default function Home() {
 
   const roleCards = useMemo(() => role ? getRoleCards(role, glanceCards) : [], [role]);
   const primaryCard = roleCards.find((card) => card.position === "primary");
-  const secondaryCards = roleCards.filter((card) => card.position === "secondary");
+  const glanceGroups = useMemo(() => [
+    { category: "content" as const, label: "CONTENT / HIGHLIGHTS", helper: "Key clinical context and source-linked highlights.", cards: roleCards.filter((card) => getGlanceCategory(card) === "content") },
+    { category: "actions" as const, label: "OPEN ACTIONS", helper: "Unresolved work that needs a care-team response.", cards: roleCards.filter((card) => getGlanceCategory(card) === "actions") },
+    { category: "risk" as const, label: "CRITICAL RISK / FLAGS", helper: "High-priority flags requiring authorised review.", cards: roleCards.filter((card) => getGlanceCategory(card) === "risk") },
+  ], [roleCards]);
   const visibleEntries = useMemo(() => role ? getRoleTimeline(role, timelineEntries) : [], [role]);
   const persistedSourceTimelineEntries = useMemo<TimelineEntryModel[]>(() => {
     if (role !== "Staff") return [];
@@ -234,14 +238,16 @@ export default function Home() {
             <button type="button" className="quiet-button" onClick={() => toast.message("Priority explanation", { description: primaryCard?.scoreExplanation ?? "Patient view does not show internal risk scoring." })}><BookOpenText aria-hidden="true" size={16} /> How this is prioritised</button>
           </div>
 
-          {primaryCard && (
-            <div className="glance-layout">
-              <GlanceCard card={primaryCard} primary onOpenSource={openSource} />
-              <div className="secondary-card-stack">
-                {secondaryCards.map((card) => <GlanceCard key={card.id} card={card} onOpenSource={openSource} />)}
-              </div>
-            </div>
-          )}
+          <div className="glance-category-grid">
+            {glanceGroups.map((group) => (
+              <section className={`glance-category-panel is-${group.category}`} key={group.category} aria-labelledby={`glance-${group.category}-title`}>
+                <div className="glance-category-heading"><div><h3 id={`glance-${group.category}-title`}>{group.label}</h3><p>{group.helper}</p></div><span>{group.cards.length}</span></div>
+                <div className="glance-category-cards">
+                  {group.cards.length ? group.cards.map((card) => <GlanceCard key={card.id} card={card} onOpenSource={openSource} />) : <p className="glance-category-empty">No items in this category.</p>}
+                </div>
+              </section>
+            ))}
+          </div>
 
           {primaryCard && primaryCard.overflowCount > 0 && (
             <button type="button" className="overflow-context" onClick={() => openSource("staff-escalation")}>
