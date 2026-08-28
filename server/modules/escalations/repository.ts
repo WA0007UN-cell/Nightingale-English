@@ -1,4 +1,4 @@
-import { and, desc, eq, ne } from "drizzle-orm";
+import { and, desc, eq, inArray, ne } from "drizzle-orm";
 import { auditLogs, careEntries, clinicMembers, patients } from "../../../drizzle/schema";
 import type { getDb } from "../../db";
 import type { EscalationWriter } from "./types";
@@ -106,6 +106,64 @@ export function createDbEscalationWriter(database: ReturnType<typeof getDb>): Es
         targetId: String(input.targetId),
         metadata: input.metadata,
       });
+    },
+    async listReviewQueue(clinicId) {
+      const rows = await database
+        .select({
+          id: careEntries.id,
+          clinicId: careEntries.clinicId,
+          patientId: careEntries.patientId,
+          sourceEntryId: careEntries.sourceEntryId,
+          authorRole: careEntries.authorRole,
+          reviewState: careEntries.reviewState,
+          content: careEntries.content,
+          occurredAt: careEntries.occurredAt,
+        })
+        .from(careEntries)
+        .where(and(
+          eq(careEntries.clinicId, clinicId),
+          eq(careEntries.entryType, "escalation"),
+          eq(careEntries.authorRole, "Staff"),
+          inArray(careEntries.reviewState, ["review_required", "reviewed"]),
+        ))
+        .orderBy(desc(careEntries.occurredAt));
+      return rows
+        .filter((row) => row.sourceEntryId !== null && (row.reviewState === "review_required" || row.reviewState === "reviewed"))
+        .map((row) => ({
+          ...row,
+          sourceEntryId: row.sourceEntryId!,
+          authorRole: "Staff" as const,
+          reviewState: row.reviewState as "review_required" | "reviewed",
+        }));
+    },
+    async getReviewQueueEscalation(clinicId, escalationId) {
+      const [row] = await database
+        .select({
+          id: careEntries.id,
+          clinicId: careEntries.clinicId,
+          patientId: careEntries.patientId,
+          sourceEntryId: careEntries.sourceEntryId,
+          authorRole: careEntries.authorRole,
+          reviewState: careEntries.reviewState,
+          content: careEntries.content,
+          occurredAt: careEntries.occurredAt,
+        })
+        .from(careEntries)
+        .where(and(eq(careEntries.id, escalationId), eq(careEntries.clinicId, clinicId), eq(careEntries.entryType, "escalation"), eq(careEntries.authorRole, "Staff")));
+      if (!row || row.sourceEntryId === null || (row.reviewState !== "review_required" && row.reviewState !== "reviewed" && row.reviewState !== "resolved")) return undefined;
+      return { ...row, sourceEntryId: row.sourceEntryId, authorRole: "Staff" as const, reviewState: row.reviewState };
+    },
+    async updateReviewState(input) {
+      await database
+        .update(careEntries)
+        .set({ reviewState: input.nextState })
+        .where(and(
+          eq(careEntries.id, input.escalationId),
+          eq(careEntries.clinicId, input.clinicId),
+          eq(careEntries.entryType, "escalation"),
+          eq(careEntries.reviewState, input.currentState),
+        ));
+      return this.getReviewQueueEscalation(input.clinicId, input.escalationId);
     },
   };
 }

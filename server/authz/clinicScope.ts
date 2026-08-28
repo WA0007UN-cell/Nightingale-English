@@ -97,3 +97,51 @@ export function assertStaffCanCreateEscalation(input: {
   }
   return membership;
 }
+
+export type ClinicianEscalationScope = {
+  id: number;
+  clinicId: number;
+  patientId: number;
+  authorRole: "Staff";
+  reviewState: "review_required" | "reviewed" | "resolved";
+};
+
+export function assertClinicianCanReviewEscalation(input: {
+  membership: ClinicMembership | undefined;
+  actorUserId: number;
+  clinicId: number;
+  escalation?: ClinicianEscalationScope;
+}) {
+  const { membership, actorUserId, clinicId, escalation } = input;
+  if (!membership || membership.userId !== actorUserId || membership.clinicId !== clinicId || membership.role !== "Clinician") {
+    throw new ClinicScopeError("Only a Clinician member of this clinic may review Staff escalations.");
+  }
+  if (!escalation || escalation.clinicId !== clinicId || escalation.authorRole !== "Staff") {
+    throw new ClinicScopeError("The escalation is outside the Clinician's clinic scope.");
+  }
+  return membership;
+}
+
+export function assertAllowedEscalationReviewTransition(
+  current: ClinicianEscalationScope["reviewState"],
+  next: "reviewed" | "resolved",
+) {
+  if ((current === "review_required" && next === "reviewed") || (current === "reviewed" && next === "resolved")) return;
+  throw new ClinicScopeError(`Escalation transition ${current} → ${next} is not allowed.`);
+}
+
+export function assertClinicianCanManageCarePlan(input: {
+  membership: ClinicMembership | undefined;
+  actorUserId: number;
+  clinicId: number;
+  patient: ScopedPatient | undefined;
+}) {
+  const { membership, actorUserId, clinicId, patient } = input;
+  if (!membership || membership.userId !== actorUserId || membership.clinicId !== clinicId || membership.role !== "Clinician") {
+    throw new ClinicScopeError("Only a Clinician member of this clinic may modify Care Plan sections.");
+  }
+  if (!patient || patient.clinicId !== clinicId) {
+    throw new ClinicScopeError("The Care Plan patient is outside the Clinician's clinic scope.");
+  }
+  return membership;
+}

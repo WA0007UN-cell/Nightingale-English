@@ -132,3 +132,15 @@
 ## UI copy cleanup
 
 - [x] Remove the user-visible TRACEABILITY design-principle card and its placeholder action from the Staff workspace without removing real source-link behaviour.
+- [x] Commit and push the verified TRACEABILITY card removal using the user-specified fix message.
+
+## Phase 2 Clinician role — review queue and versioned Care Plan
+
+- [x] P2-C01/C02: Verify the Clinician-only pending Staff escalation review queue and reviewed/resolved transition through the visible in-app session flow.
+- [x] P2-C03/C04: Verify the Clinician-only Care Plan section editor through the visible in-app session flow; verify baseVersion mismatch with deterministic server tests.
+- [x] P2-C05/C06: Verify immutable Care Plan version history and safe revert through the visible in-app session flow.
+- [x] Block Staff, Patient, and Admin on the server from all Care Plan mutations with FORBIDDEN/403 responses.
+- [ ] Complete final public-file audit and requested GitHub commit/push for P2-C01 to P2-C06.
+- [x] Fix the visible Clinician preview session action so it establishes the development auth context without console intervention, then re-run all Clinician browser checks.
+- [x] Confirm the visible review queue supports review_required → reviewed → resolved and refreshes after both actions.
+- [x] Record the baseVersion mismatch as automated-server coverage unless a safe, deterministic browser conflict demonstration is introduced.

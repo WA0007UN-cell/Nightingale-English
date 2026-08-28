@@ -3,7 +3,7 @@ import { Clock3, LoaderCircle, ShieldAlert } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { TaskStatusButton } from "./TaskStatusButton";
 
-const STAFF_PREVIEW_TOKEN_KEY = "nightingale_staff_preview_token";
+const PREVIEW_TOKEN_KEY = "nightingale_preview_token";
 
 type PreviewSessionResponse = { ok: boolean; previewToken?: string };
 
@@ -25,7 +25,7 @@ export function AssignedTaskList() {
       if (!response.ok) throw new Error("The synthetic Staff session could not be created.");
       const body = (await response.json()) as PreviewSessionResponse;
       if (!body.ok || !body.previewToken) throw new Error("The synthetic Staff preview token could not be created.");
-      window.sessionStorage.setItem(STAFF_PREVIEW_TOKEN_KEY, body.previewToken);
+      window.sessionStorage.setItem(PREVIEW_TOKEN_KEY, body.previewToken);
       await Promise.all([
         utils.tasks.assigned.invalidate(),
         utils.escalations.context.invalidate({ patientId: 90001 }),

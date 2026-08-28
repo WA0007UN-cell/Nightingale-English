@@ -32,7 +32,7 @@ export async function getActorFromSession(request: Request): Promise<SessionActo
       const { payload } = await jwtVerify(previewToken, new TextEncoder().encode(secret));
       const userId = Number(payload.userId);
       const clinicId = Number(payload.clinicId);
-      if (payload.preview === "synthetic_staff" && Number.isInteger(userId) && userId > 0 && Number.isInteger(clinicId) && clinicId > 0) {
+      if ((payload.preview === "synthetic_staff" || payload.preview === "synthetic_clinician") && Number.isInteger(userId) && userId > 0 && Number.isInteger(clinicId) && clinicId > 0) {
         return { userId, clinicId };
       }
     } catch {

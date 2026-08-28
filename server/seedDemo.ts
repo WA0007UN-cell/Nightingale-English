@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { auditLogs, careEntries, clinicMembers, clinics, patients, tasks, users } from "../drizzle/schema";
+import { auditLogs, careEntries, carePlanSections, carePlanSectionVersions, clinicMembers, clinics, patients, tasks, users } from "../drizzle/schema";
 import { closeDb, getDb } from "./db";
 
 export const syntheticFoundation = {
@@ -14,6 +14,7 @@ export const syntheticFoundation = {
   timestamps: {
     staffEntry: new Date("2026-02-18T08:45:00.000Z"),
     clinicianEntry: new Date("2026-02-18T09:30:00.000Z"),
+    escalationEntry: new Date("2026-02-18T10:15:00.000Z"),
     taskDue: new Date("2026-02-18T16:00:00.000Z"),
   },
 } as const;
@@ -22,11 +23,12 @@ type SeedActor = (typeof syntheticFoundation.actors)[keyof typeof syntheticFound
 type SeedEntry = {
   clinicId: number;
   patientId: number;
+  sourceEntryId?: number;
   authorUserId: number;
   authorRole: "Clinician" | "Staff";
-  entryType: "clinician" | "staff";
+  entryType: "clinician" | "staff" | "escalation";
   visibility: "clinic" | "patient";
-  reviewState: "not_required" | "approved";
+  reviewState: "not_required" | "review_required" | "approved";
   content: string;
   occurredAt: Date;
 };
@@ -100,6 +102,35 @@ export async function seedSyntheticFoundation() {
     clinicId: clinic.id, patientId: patient.id, authorUserId: clinician.id, authorRole: "Clinician", entryType: "clinician", visibility: "patient", reviewState: "approved",
     content: "Synthetic shared instruction: review your next scheduled check-in with the care team.", occurredAt: syntheticFoundation.timestamps.clinicianEntry,
   });
+  await ensureEntry({
+    clinicId: clinic.id, patientId: patient.id, sourceEntryId: staffEntry.id, authorUserId: staff.id, authorRole: "Staff", entryType: "escalation", visibility: "clinic", reviewState: "review_required",
+    content: "Synthetic pending Staff escalation: request clinician review of the follow-up sequence.", occurredAt: syntheticFoundation.timestamps.escalationEntry,
+  });
+
+  const [existingSection] = await database.select().from(carePlanSections)
+    .where(and(eq(carePlanSections.clinicId, clinic.id), eq(carePlanSections.patientId, patient.id), eq(carePlanSections.sectionKey, "follow_up_plan")))
+    .limit(1);
+  let carePlanSection = existingSection;
+  if (!carePlanSection) {
+    await database.insert(carePlanSections).values({
+      clinicId: clinic.id, patientId: patient.id, sectionKey: "follow_up_plan", currentVersion: 1,
+      content: "Synthetic plan: continue monitoring and arrange a clinician follow-up after the scheduled check-in.",
+      updatedByUserId: clinician.id,
+    });
+    [carePlanSection] = await database.select().from(carePlanSections)
+      .where(and(eq(carePlanSections.clinicId, clinic.id), eq(carePlanSections.patientId, patient.id), eq(carePlanSections.sectionKey, "follow_up_plan")))
+      .limit(1);
+  }
+  if (!carePlanSection) throw new Error("Could not create synthetic Care Plan section.");
+  const [existingVersion] = await database.select().from(carePlanSectionVersions)
+    .where(and(eq(carePlanSectionVersions.sectionId, carePlanSection.id), eq(carePlanSectionVersions.versionNumber, 1)))
+    .limit(1);
+  if (!existingVersion) {
+    await database.insert(carePlanSectionVersions).values({
+      clinicId: clinic.id, patientId: patient.id, sectionId: carePlanSection.id, versionNumber: 1,
+      content: carePlanSection.content, changeType: "seed", changedByUserId: clinician.id,
+    });
+  }
 
   const taskFixtures = [
     { title: "Synthetic: confirm scheduled check-in", dueAt: syntheticFoundation.timestamps.taskDue },
@@ -121,7 +152,7 @@ export async function seedSyntheticFoundation() {
     });
   }
 
-  return { clinicId: clinic.id, patientId: patient.id, entryCount: 2, taskCount: taskFixtures.length };
+  return { clinicId: clinic.id, patientId: patient.id, entryCount: 3, taskCount: taskFixtures.length, carePlanSectionId: carePlanSection.id };
 }
 
 const isDirectRun = process.argv[1]?.endsWith("seedDemo.ts");

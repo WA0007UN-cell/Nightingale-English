@@ -25,6 +25,28 @@ async function startServer() {
   // Development-only fixture login for the synthetic Staff workflow preview.
   // It is absent from production and still flows through the normal signed-session and scope checks.
   if (!isProduction) {
+    // Development-only fixture logins are restricted to known synthetic seed users.
+    // The generated token is still verified in server/auth/session.ts before every tRPC procedure.
+    const createPreviewSession = (pathName: string, openId: string, role: "Staff" | "Clinician", preview: "synthetic_staff" | "synthetic_clinician") => {
+      app.all(pathName, async (_req, res) => {
+        const secret = process.env.JWT_SECRET;
+        if (!secret) return res.status(500).json({ error: "JWT_SECRET is not configured." });
+        const [actor] = await getDb()
+          .select({ id: users.id, clinicId: clinicMembers.clinicId })
+          .from(users)
+          .innerJoin(clinicMembers, eq(clinicMembers.userId, users.id))
+          .where(and(eq(users.openId, openId), eq(clinicMembers.role, role)))
+          .limit(1);
+        if (!actor) return res.status(404).json({ error: `Synthetic ${role} seed is not available.` });
+        const token = await new SignJWT({ userId: String(actor.id), clinicId: String(actor.clinicId), preview })
+          .setProtectedHeader({ alg: "HS256" })
+          .setIssuedAt()
+          .setExpirationTime("10m")
+          .sign(new TextEncoder().encode(secret));
+        return res.json({ ok: true, syntheticOnly: true, previewToken: token });
+      });
+    };
+
     app.all("/api/dev/staff-session", async (_req, res) => {
       const secret = process.env.JWT_SECRET;
       if (!secret) return res.status(500).json({ error: "JWT_SECRET is not configured." });
@@ -42,6 +64,7 @@ async function startServer() {
         .sign(new TextEncoder().encode(secret));
       return res.json({ ok: true, syntheticOnly: true, previewToken: token });
     });
+    createPreviewSession("/api/dev/clinician-session", "synthetic-clinician-ravi", "Clinician", "synthetic_clinician");
   }
 
   if (isProduction) {
