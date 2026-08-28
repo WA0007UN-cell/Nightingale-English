@@ -1,0 +1,5 @@
+# AI Assistance Attribution
+
+This repository was developed with AI assistance for product-document drafting, interface scaffolding, and implementation support. The project uses synthetic data only. The repository owner is responsible for reviewing the scope, validating the application, and deciding which changes are retained.
+
+The current Phase 1 implementation is explicitly documented as a client-side demonstration. It does not claim production authentication, server-enforced authorization, clinical decision-making, real patient records, or a deployed medical service.
