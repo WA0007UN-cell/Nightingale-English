@@ -35,13 +35,12 @@ async function startServer() {
         .where(and(eq(users.openId, "synthetic-staff-nora"), eq(clinicMembers.role, "Staff")))
         .limit(1);
       if (!staff) return res.status(404).json({ error: "Synthetic Staff seed is not available." });
-      const token = await new SignJWT({ userId: String(staff.id), clinicId: String(staff.clinicId) })
+      const token = await new SignJWT({ userId: String(staff.id), clinicId: String(staff.clinicId), preview: "synthetic_staff" })
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
         .setExpirationTime("10m")
         .sign(new TextEncoder().encode(secret));
-      res.setHeader("Set-Cookie", `nightingale_session=${token}; Path=/; HttpOnly; SameSite=Lax`);
-      return res.json({ ok: true, syntheticOnly: true });
+      return res.json({ ok: true, syntheticOnly: true, previewToken: token });
     });
   }
 

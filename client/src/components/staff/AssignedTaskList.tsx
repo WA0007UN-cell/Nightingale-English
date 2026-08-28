@@ -3,6 +3,10 @@ import { Clock3, LoaderCircle, ShieldAlert } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { TaskStatusButton } from "./TaskStatusButton";
 
+const STAFF_PREVIEW_TOKEN_KEY = "nightingale_staff_preview_token";
+
+type PreviewSessionResponse = { ok: boolean; previewToken?: string };
+
 function formatDueAt(value: Date | null) {
   return value ? new Date(value).toLocaleString() : "No due date";
 }
@@ -17,8 +21,11 @@ export function AssignedTaskList() {
     setIsSigningIn(true);
     setPreviewError(null);
     try {
-      const response = await fetch("/api/dev/staff-session", { method: "POST" });
+      const response = await fetch("/api/dev/staff-session", { method: "POST", credentials: "include" });
       if (!response.ok) throw new Error("The synthetic Staff session could not be created.");
+      const body = (await response.json()) as PreviewSessionResponse;
+      if (!body.ok || !body.previewToken) throw new Error("The synthetic Staff preview token could not be created.");
+      window.sessionStorage.setItem(STAFF_PREVIEW_TOKEN_KEY, body.previewToken);
       await utils.tasks.assigned.invalidate();
       setIsSigningIn(false);
     } catch (error) {

@@ -114,3 +114,6 @@
 - [x] Preserve one deterministic open synthetic Staff task after the verification flow so the refreshed preview still exposes the real Start button.
 - [x] Make the Staff development preview create its synthetic server session automatically when entering the Staff workspace, without exposing that behavior in production.
 - [x] Replace the unreliable automatic Staff preview session with an explicit development-only session button that refetches persisted tasks in place.
+- [x] Replace the preview cookie dependency with a short-lived server-signed synthetic Staff token carried only by the current development browser tab; production rejects it.
+- [x] Diagnose the Staff preview `Failed to fetch` error across database schema, synthetic seed, server route, and frontend request layers.
+- [x] Repair the preview session connection layer and verify the Staff preview loads persisted tasks without a fetch error.
