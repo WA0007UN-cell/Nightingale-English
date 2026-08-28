@@ -24,7 +24,11 @@ async function startServer() {
     app.use(express.static(staticPath));
     app.get("*", (_req, res) => res.sendFile(path.join(staticPath, "index.html")));
   } else {
-    const vite = await createViteServer({ configFile: path.join(projectRoot, "vite.config.ts"), server: { middlewareMode: true }, appType: "spa" });
+    const vite = await createViteServer({
+      configFile: path.join(projectRoot, "vite.config.ts"),
+      server: { middlewareMode: true, hmr: { server } },
+      appType: "spa",
+    });
     app.use(vite.middlewares);
   }
 

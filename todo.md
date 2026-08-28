@@ -88,3 +88,7 @@
 - [x] Add a browser-local Good morning, Good afternoon, or Good evening greeting to the login welcome panel.
 - [x] Add deterministic unit coverage for the greeting time boundaries.
 - [ ] Verify the login page after the greeting update and synchronize the approved change to GitHub.
+
+## Development environment maintenance
+
+- [x] Fix the Vite development hot-reload WebSocket connection after the Express/tRPC server integration.
