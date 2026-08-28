@@ -128,3 +128,7 @@
 - [x] Update the isolated migration/seed integration test to replay every generated migration in order, including P2-S04 schema changes.
 - [x] Wire escalation source navigation into the existing main Timeline focus/scroll state rather than a parallel persisted-source list.
 - [x] Add patient-flow coverage proving clinic-only internal escalations and clinic-only sources are absent from Patient-visible data.
+
+## UI copy cleanup
+
+- [x] Remove the user-visible TRACEABILITY design-principle card and its placeholder action from the Staff workspace without removing real source-link behaviour.
