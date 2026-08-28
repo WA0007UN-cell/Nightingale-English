@@ -291,6 +291,8 @@ export default function Home() {
           </section>
         ) : null}
 
+        {(role === "Staff" || role === "Clinician") ? <AiScribeArchive onOpenSource={openSource} /> : null}
+
         <section className="context-strip" aria-label="Patient care context">
           {patientContext.map((item) => (
             <div className="context-metric" key={item.label}>
@@ -336,7 +338,6 @@ export default function Home() {
                   <span>Audit and access events are available in the governance area.</span>
                 </div>
               )}
-              <AiScribeArchive onOpenSource={openSource} />
               <AuditEventDrawer clinicId={1} />
             </section> : null}
 
