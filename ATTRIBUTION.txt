@@ -1,5 +1,109 @@
-# AI Assistance Attribution
+Nightingale English — Third-Party Attribution
+===============================================
 
-This repository was developed with AI assistance for product-document drafting, interface scaffolding, and implementation support. The project uses synthetic data only. The repository owner is responsible for reviewing the scope, validating the application, and deciding which changes are retained.
+Generated: 2026-08-28
+Repository: https://github.com/WA0007UN-cell/Nightingale-English
 
-The current Phase 1 implementation is explicitly documented as a client-side demonstration. It does not claim production authentication, server-enforced authorization, clinical decision-making, real patient records, or a deployed medical service.
+AI ASSISTANCE
+-------------
+This repository was developed with AI assistance for product-document drafting,
+interface scaffolding, and implementation support. The project uses synthetic
+data only. The repository owner is responsible for reviewing the scope,
+validating the application, and deciding which changes are retained.
+
+NO EXTERNAL AI MODEL
+--------------------
+The project does not bundle or call an external paid AI model. AI Scribe output
+uses deterministic local mock/fixture generation. No OpenAI, Anthropic, Google,
+or other model SDK/API is required for local setup.
+
+DIRECT RUNTIME LIBRARIES
+------------------------
+Exact resolved versions are recorded in pnpm-lock.yaml.
+
+@libsql/client             0.17.4       MIT
+@hookform/resolvers        5.2.2        MIT
+@radix-ui/react-*          1.x/2.x/3.x  MIT
+@tanstack/react-query      5.102.8      MIT
+@trpc/client               11.18.0      MIT
+@trpc/react-query          11.18.0      MIT
+@trpc/server               11.18.0      MIT
+axios                      1.12.0       MIT
+class-variance-authority   0.7.1        Apache-2.0
+clsx                       2.1.1        MIT
+cmdk                       1.1.1        MIT
+cookie                     2.0.1        MIT
+dotenv                     17.4.2       BSD-2-Clause
+drizzle-orm                0.45.2       Apache-2.0
+embla-carousel-react       8.6.0        MIT
+express                    4.21.2       MIT
+framer-motion              12.23.22     MIT
+input-otp                  1.4.2        MIT
+jose                       6.2.10       MIT
+lucide-react               0.453.0      ISC
+nanoid                     5.1.5        MIT
+next-themes                0.4.6        MIT
+react                      19.2.1       MIT
+react-day-picker           9.11.1       MIT
+react-dom                  19.2.1       MIT
+react-hook-form            7.64.0       MIT
+react-resizable-panels     3.0.6        MIT
+recharts                   2.15.2       MIT
+sonner                     2.0.7        MIT
+streamdown                 1.4.0        MIT
+superjson                  2.2.6        MIT
+tailwind-merge             3.3.1        MIT
+tailwindcss-animate        1.0.7        MIT
+vaul                       1.1.2        MIT
+wouter                     3.3.5        MIT
+zod                        4.1.12       MIT
+
+The @radix-ui packages used directly are accordion, alert-dialog, aspect-ratio,
+avatar, checkbox, collapsible, context-menu, dialog, dropdown-menu, hover-card,
+label, menubar, navigation-menu, popover, progress, radio-group, scroll-area,
+select, separator, slider, slot, switch, tabs, toggle, and tooltip.
+
+DIRECT DEVELOPMENT AND BUILD TOOLS
+-----------------------------------
+@builder.io/vite-plugin-jsx-loc  0.1.1   MIT
+@tailwindcss/typography          0.5.15  MIT
+@tailwindcss/vite                4.1.3   MIT
+@types/express                   4.17.21 MIT
+@types/google.maps               3.58.1  MIT
+@types/node                      24.7.0  MIT
+@types/react                     19.2.1  MIT
+@types/react-dom                 19.2.1  MIT
+@vitejs/plugin-react             5.0.4   MIT
+add                               2.0.6   MIT
+autoprefixer                     10.4.20 MIT
+drizzle-kit                      0.31.10 Apache-2.0
+esbuild                           0.25.0  MIT
+pnpm                              10.15.1 MIT
+postcss                           8.4.47  MIT
+prettier                          3.6.2   MIT
+tailwindcss                       4.1.14 MIT
+tsx                               4.19.1  MIT
+tw-animate-css                   1.4.0   MIT
+typescript                        5.9.3   Apache-2.0
+vite                              7.1.7   MIT
+vite-plugin-manus-runtime        0.0.58  MIT
+vitest                            2.1.4   MIT
+
+PLATFORM AND DATA TECHNOLOGY
+----------------------------
+Node.js is the execution runtime and is distributed under the Node.js project's
+MIT license with additional bundled third-party notices. SQLite is the local
+embedded database engine; SQLite itself is public domain. The application
+accesses local SQLite through @libsql/client.
+
+TRANSITIVE DEPENDENCIES
+-----------------------
+This file inventories direct dependencies declared in package.json. The full
+transitive dependency graph is resolved in pnpm-lock.yaml. To audit the exact
+installed graph, run:
+
+  pnpm licenses list
+
+The authoritative full license text remains the license file shipped by each
+resolved package. Before redistribution, review any newly added dependency or
+license change.

@@ -1,0 +1,30 @@
+flowchart LR
+  B[Browser / React workspace] --> T[tRPC over Express]
+  T --> P[protectedProcedure\nAuthenticated session actor]
+  P --> A[Clinic scope + role authorization\nserver/authz/clinicScope.ts]
+  A --> D[Domain modules\nworkspace · tasks · care plan · audit]
+  D --> R[(SQLite\ndata/nightingale.sqlite)]
+
+  S[Source interaction\nclinician / staff / patient] --> X[PHI redaction\nserver/modules/aiScribe/redact.ts]
+  X --> M[Deterministic mock Scribe\nno external LLM]
+  M --> AI[careEntries\nSystem · draft · aiType]
+  AI -->|sourceEntryId + provenancePointer| R
+  AI --> V[AI highlights / Glance projection]
+  V -->|resolve source + focus| B
+
+  CE[careEntries\nTimeline spine] --> CM[typed collaboration / escalation entries\ncomment-like records]
+  CE --> H[Glance highlights / risk candidates]
+  CP[carePlanSections\ncurrent plan] --> CV[carePlanSectionVersions\nappend-only history / reverts]
+  CP --> R
+  CV --> R
+  G[auditLogs\nmetadata-only governance projection] --> R
+  D --> G
+
+  classDef boundary fill:#e8f0ff,stroke:#4273c6,color:#102a56;
+  classDef security fill:#fff1d6,stroke:#c58a19,color:#5d3b00;
+  classDef store fill:#e8f7ed,stroke:#3a8a57,color:#143b22;
+  classDef ai fill:#f2e9ff,stroke:#7a4db3,color:#321852;
+  class B,T,D boundary;
+  class P,A,X security;
+  class R,CE,CM,CP,CV,G store;
+  class S,M,AI,V,H ai;
