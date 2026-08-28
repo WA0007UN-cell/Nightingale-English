@@ -19,6 +19,25 @@ const roleTaskIds: Record<DemoRole, string[]> = {
   Admin: [],
 };
 
+const glanceCategoryById: Record<string, "content" | "actions" | "risk"> = {
+  "clinician-medication-review": "risk",
+  "clinician-plan-conflict": "content",
+  "clinician-open-escalation": "actions",
+  "staff-call-follow-up": "actions",
+  "staff-symptom-capture": "content",
+  "staff-awaiting-guidance": "actions",
+  "patient-approved-plan": "content",
+  "patient-appointment": "actions",
+  "patient-care-plan": "content",
+  "admin-review-completeness": "content",
+  "admin-audit-activity": "content",
+  "admin-access-review": "content",
+};
+export type GlanceCategory = "content" | "actions" | "risk";
+export function getGlanceCategory(card: GlanceCard): GlanceCategory {
+  return glanceCategoryById[card.id] ?? (card.severity === "critical" || card.severity === "high" ? "risk" : "actions");
+}
+
 export function getRoleCards(role: DemoRole, cards: GlanceCard[]) {
   return cards.filter((card) => card.role === role);
 }

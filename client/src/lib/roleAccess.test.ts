@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { glanceCards, tasks, timelineEntries } from "@/lib/demoData";
-import { getRoleCards, getRoleTasks, getRoleTimeline } from "@/lib/roleAccess";
+import { getGlanceCategory, getRoleCards, getRoleTasks, getRoleTimeline } from "@/lib/roleAccess";
 
 describe("demo role access selectors", () => {
   it("returns only cards owned by the signed-in role", () => {
@@ -9,6 +9,13 @@ describe("demo role access selectors", () => {
       expect(cards.length).toBeGreaterThan(0);
       expect(cards.every((card) => card.role === role)).toBe(true);
     }
+  });
+
+  it("classifies Glance View into content, open actions, and critical risk flags", () => {
+    const clinicianCards = getRoleCards("Clinician", glanceCards);
+    expect(new Set(clinicianCards.map(getGlanceCategory))).toEqual(new Set(["content", "actions", "risk"]));
+    expect(getGlanceCategory(clinicianCards.find((card) => card.id === "clinician-medication-review")!)).toBe("risk");
+    expect(getGlanceCategory(getRoleCards("Staff", glanceCards).find((card) => card.id === "staff-call-follow-up")!)).toBe("actions");
   });
 
   it("keeps internal staff and system entries out of the patient timeline", () => {

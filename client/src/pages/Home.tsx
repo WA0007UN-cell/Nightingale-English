@@ -229,9 +229,9 @@ export default function Home() {
             <div>
               <p className="eyebrow">PRIORITISED CONTEXT</p>
               <h2 id="glance-title">Glance View</h2>
-              <p className="section-helper">One action, one reason, one traceable source.</p>
+              <p className="section-helper">Content / Highlights · Open Actions · Critical Risk / Flags.</p>
             </div>
-            <button type="button" className="quiet-button" onClick={() => toast.message("Priority explanation", { description: primaryCard?.scoreExplanation ?? "Patient and Admin views do not show internal risk scoring." })}><BookOpenText aria-hidden="true" size={16} /> How this is prioritised</button>
+            <button type="button" className="quiet-button" onClick={() => toast.message("Priority explanation", { description: primaryCard?.scoreExplanation ?? "Patient view does not show internal risk scoring." })}><BookOpenText aria-hidden="true" size={16} /> How this is prioritised</button>
           </div>
 
           {primaryCard && (
