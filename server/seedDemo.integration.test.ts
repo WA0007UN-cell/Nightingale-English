@@ -6,8 +6,8 @@ type SeedModule = typeof import("./seedDemo");
 
 const originalDatabaseUrl = process.env.DATABASE_URL;
 const schemaName = `nightingale_seed_test_${Date.now().toString(36)}`;
-let admin: mysql.Pool;
-let testDb: mysql.Pool;
+let admin: mysql.Pool | undefined;
+let testDb: mysql.Pool | undefined;
 let seedModule: SeedModule;
 
 describe.skipIf(!originalDatabaseUrl).sequential("synthetic Foundation seed integration", () => {
@@ -25,7 +25,7 @@ describe.skipIf(!originalDatabaseUrl).sequential("synthetic Foundation seed inte
     for (const migrationFile of migrationFiles) {
       const sql = await fs.readFile(new URL(`../drizzle/migrations/${migrationFile}`, import.meta.url), "utf8");
       for (const statement of sql.split("--> statement-breakpoint").map((part) => part.trim()).filter(Boolean)) {
-        await testDb.query(statement);
+        await testDb!.query(statement);
       }
     }
 
@@ -38,16 +38,18 @@ describe.skipIf(!originalDatabaseUrl).sequential("synthetic Foundation seed inte
     const { closeDb } = await import("./db");
     await closeDb();
     if (originalDatabaseUrl) process.env.DATABASE_URL = originalDatabaseUrl;
-    await testDb.end();
-    await admin.query(`DROP DATABASE IF EXISTS \`${schemaName}\``);
-    await admin.end();
+    if (testDb) await testDb.end();
+    if (admin) {
+      await admin.query(`DROP DATABASE IF EXISTS \`${schemaName}\``);
+      await admin.end();
+    }
   });
 
   it("creates exactly one deterministic Foundation record set after two seed runs", async () => {
     await seedModule.seedSyntheticFoundation();
     await seedModule.seedSyntheticFoundation();
 
-    const [rows] = await testDb.query(
+    const [rows] = await testDb!.query(
       "SELECT (SELECT COUNT(*) FROM clinics WHERE name = 'Harborview Family Clinic — Synthetic') AS clinics, (SELECT COUNT(*) FROM users WHERE openId LIKE 'synthetic-%') AS users, (SELECT COUNT(*) FROM clinicMembers) AS memberships, (SELECT COUNT(*) FROM patients WHERE displayName = 'Maya Chen') AS patients, (SELECT COUNT(*) FROM careEntries WHERE content LIKE 'Synthetic %') AS entries, (SELECT COUNT(*) FROM tasks WHERE title = 'Synthetic: confirm scheduled check-in') AS tasks, (SELECT COUNT(*) FROM auditLogs WHERE action = 'synthetic_foundation_seeded') AS audits",
     );
     expect((rows as Array<Record<string, number>>)[0]).toMatchObject({ clinics: 1, users: 4, memberships: 4, patients: 1, entries: 3, tasks: 1, audits: 1 });
