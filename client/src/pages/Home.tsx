@@ -108,9 +108,9 @@ export default function Home() {
   const roleCards = useMemo(() => role ? getRoleCards(role, glanceCards) : [], [role]);
   const primaryCard = roleCards.find((card) => card.position === "primary");
   const glanceGroups = useMemo(() => [
-    { category: "content" as const, label: "CONTENT / HIGHLIGHTS", helper: "Key clinical context and source-linked highlights.", cards: roleCards.filter((card) => getGlanceCategory(card) === "content") },
-    { category: "actions" as const, label: "OPEN ACTIONS", helper: "Unresolved work that needs a care-team response.", cards: roleCards.filter((card) => getGlanceCategory(card) === "actions") },
     { category: "risk" as const, label: "CRITICAL RISK / FLAGS", helper: "High-priority flags requiring authorised review.", cards: roleCards.filter((card) => getGlanceCategory(card) === "risk") },
+    { category: "actions" as const, label: "OPEN ACTIONS", helper: "Unresolved work that needs a care-team response.", cards: roleCards.filter((card) => getGlanceCategory(card) === "actions") },
+    { category: "content" as const, label: "CONTENT / HIGHLIGHTS", helper: "Key clinical context and source-linked highlights.", cards: roleCards.filter((card) => getGlanceCategory(card) === "content") },
   ], [roleCards]);
   const visibleEntries = useMemo(() => role ? getRoleTimeline(role, timelineEntries) : [], [role]);
   const persistedSourceTimelineEntries = useMemo<TimelineEntryModel[]>(() => {
