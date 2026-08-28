@@ -22,7 +22,7 @@ export const aiScribeRouter = router({
       clinicId: input.clinicId, patientId: input.patientId, sourceEntryId: generated.sourceEntryId, authorRole: generated.authorRole,
       entryType: "ai", aiType: generated.interactionType, provenancePointer: generated.provenancePointer, visibility: generated.visibility,
       reviewState: generated.reviewState, content: generated.content, occurredAt: input.occurredAt ?? new Date(),
-    }).$returningId();
+    }).returning({ id: careEntries.id });
     return { id: created?.id, interactionType: generated.interactionType, provenancePointer: generated.provenancePointer, reviewState: generated.reviewState };
   }),
 });

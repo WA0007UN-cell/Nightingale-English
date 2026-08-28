@@ -1,32 +1,30 @@
-import mysql, { type Pool } from "mysql2/promise";
-import { drizzle, type MySql2Database } from "drizzle-orm/mysql2";
+import { createClient, type Client } from "@libsql/client";
+import { mkdirSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { drizzle, type LibSQLDatabase } from "drizzle-orm/libsql";
 import * as schema from "../drizzle/schema";
 
-let pool: Pool | undefined;
-type Database = MySql2Database<typeof schema>;
-let database: Database | undefined;
+let client: Client | undefined;
+let database: LibSQLDatabase<typeof schema> | undefined;
 
-/** Returns the server-only database client without exposing DATABASE_URL to the browser bundle. */
+function databaseUrl() {
+  const path = process.env.SQLITE_DB_PATH?.trim() || resolve(process.cwd(), "data/nightingale.sqlite");
+  if (path === ":memory:") return "file::memory:";
+  mkdirSync(dirname(path), { recursive: true });
+  return path.startsWith("file:") ? path : `file:${path}`;
+}
+
+/** Returns the server-only local SQLite client without exposing filesystem paths to the browser bundle. */
 export function getDb() {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    throw new Error("DATABASE_URL is required before the persisted workspace can run.");
-  }
-
-  if (!pool) {
-    pool = mysql.createPool({ uri: databaseUrl, connectionLimit: 5, enableKeepAlive: true });
-  }
-  if (!database) {
-    database = drizzle(pool, { schema, mode: "default" });
-  }
+  if (!client) client = createClient({ url: databaseUrl() });
+  if (!database) database = drizzle(client, { schema });
   return database;
 }
 
-/** Closes the lazily-created pool during a controlled server shutdown. */
+/** Closes the local database during a controlled server shutdown or test cleanup. */
 export async function closeDb() {
-  if (!pool) return;
-  const activePool = pool;
-  pool = undefined;
+  if (!client) return;
+  client.close();
+  client = undefined;
   database = undefined;
-  await activePool.end();
 }

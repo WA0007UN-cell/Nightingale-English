@@ -79,8 +79,8 @@ export function createDbEscalationWriter(database: ReturnType<typeof getDb>): Es
         reviewState: "review_required",
         content: input.content,
         occurredAt: input.occurredAt,
-      });
-      const createdId = Number(result.insertId);
+      }).returning({ id: careEntries.id });
+      const createdId = result?.id;
       const [created] = await database
         .select({
           id: careEntries.id,

@@ -84,7 +84,7 @@ export function createDbCarePlanWriter(database: ReturnType<typeof getDb>): Care
             eq(carePlanSections.id, input.sectionId), eq(carePlanSections.clinicId, input.clinicId),
             eq(carePlanSections.patientId, input.patientId), eq(carePlanSections.currentVersion, input.baseVersion),
           ));
-        if (result[0].affectedRows !== 1) return undefined;
+        if (result.rowsAffected !== 1) return undefined;
 
         await tx.insert(carePlanSectionVersions).values({
           clinicId: input.clinicId, patientId: input.patientId, sectionId: input.sectionId, versionNumber: nextVersion,
