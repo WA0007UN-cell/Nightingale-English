@@ -134,6 +134,14 @@
 - [x] Remove the user-visible TRACEABILITY design-principle card and its placeholder action from the Staff workspace without removing real source-link behaviour.
 - [x] Commit and push the verified TRACEABILITY card removal using the user-specified fix message.
 
+## Workspace action hierarchy
+
+- [x] Move Staff assigned tasks from the lower supporting panel into a first-screen action area directly below the patient header.
+- [x] Move Clinician pending escalation reviews and Care Plan action entry into the first-screen action area directly below the patient header.
+- [x] Keep Glance View readable and retain the lower Timeline as the evidence/detail layer after the role action area is promoted.
+- [x] Verify Clinician and Staff first-screen action layout in an actual mobile viewport, then save a dedicated review checkpoint.
+- [x] Use and remove a temporary development-only visual role state for mobile layout verification without granting a server session.
+
 ## Phase 2 Clinician role — review queue and versioned Care Plan
 
 - [x] P2-C01/C02: Verify the Clinician-only pending Staff escalation review queue and reviewed/resolved transition through the visible in-app session flow.

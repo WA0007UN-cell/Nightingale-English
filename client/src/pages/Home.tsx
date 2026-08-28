@@ -223,6 +223,45 @@ export default function Home() {
           </div>
         </section>
 
+        {role === "Staff" ? (
+          <section className="role-action-section staff-action-section" aria-labelledby="staff-actions-title">
+            <div className="role-action-heading">
+              <div>
+                <p className="eyebrow">YOUR NEXT ACTIONS</p>
+                <h2 id="staff-actions-title">My assigned tasks</h2>
+                <p>Start or complete the clinic-scoped tasks assigned to you before reviewing supporting context.</p>
+              </div>
+              <span className="role-action-badge">STAFF</span>
+            </div>
+            <AssignedTaskList />
+          </section>
+        ) : null}
+
+        {role === "Clinician" ? (
+          <section className="role-action-section clinician-action-section" aria-labelledby="clinician-actions-title">
+            <div className="role-action-heading">
+              <div>
+                <p className="eyebrow">CLINICIAN ACTIONS</p>
+                <h2 id="clinician-actions-title">Review and plan</h2>
+                <p>Resolve pending Staff escalations, then update the protected Care Plan when clinical action is required.</p>
+              </div>
+              <span className="role-action-badge">CLINICIAN</span>
+            </div>
+            <div className="clinician-action-grid">
+              <section className="role-action-card" aria-labelledby="review-queue-title">
+                <p className="eyebrow">PENDING REVIEW</p>
+                <h3 id="review-queue-title">Staff escalations</h3>
+                <ReviewQueue />
+              </section>
+              <section className="role-action-card" aria-labelledby="care-plan-title">
+                <p className="eyebrow">PROTECTED CARE PLAN</p>
+                <h3 id="care-plan-title">Follow-up plan</h3>
+                <CarePlanEditor />
+              </section>
+            </div>
+          </section>
+        ) : null}
+
         <section className="glance-section" aria-labelledby="glance-title">
           <div className="section-heading-row">
             <div>
@@ -283,11 +322,9 @@ export default function Home() {
           </div>
 
           <aside className="context-rail" aria-label="Supporting care context">
-            <section className="side-panel today-panel">
-              <div className="panel-heading compact"><div><p className="eyebrow">{role === "Patient" ? "SHARED CARE" : role === "Admin" ? "GOVERNANCE" : role === "Staff" ? "PERSISTED TASKS" : "ACTIVE WORK"}</p><h2>{role === "Patient" ? "Your next steps" : role === "Admin" ? "Review queue" : "My tasks"}</h2></div><span className="count-badge">{role === "Staff" ? "Live" : roleTasks.length}</span></div>
-              {role === "Staff" ? (
-                <AssignedTaskList />
-              ) : roleTasks.length > 0 ? (
+            {role !== "Staff" && role !== "Clinician" ? <section className="side-panel today-panel">
+              <div className="panel-heading compact"><div><p className="eyebrow">{role === "Patient" ? "SHARED CARE" : "GOVERNANCE"}</p><h2>{role === "Patient" ? "Your next steps" : "Review queue"}</h2></div><span className="count-badge">{roleTasks.length}</span></div>
+              {roleTasks.length > 0 ? (
                 <TaskList tasks={roleTasks} onOpenTask={(task) => toast.message(task.title, { description: `${task.status} · ${task.assignee} · ${task.due}` })} />
               ) : (
                 <div className="task-empty">
@@ -296,12 +333,7 @@ export default function Home() {
                 </div>
               )}
               <button className="side-panel-link" type="button" onClick={() => showPlannedFeature(role === "Patient" ? "Shared care plan" : role === "Admin" ? "Governance log" : "Task board")}>{role === "Patient" ? "Open shared plan" : role === "Admin" ? "Open governance log" : "Open task board"} <span>→</span></button>
-            </section>
-
-            {role === "Clinician" ? <>
-              <section className="side-panel clinician-panel"><p className="eyebrow">PENDING REVIEW</p><h3>Staff escalations</h3><ReviewQueue /></section>
-              <section className="side-panel clinician-panel"><p className="eyebrow">PROTECTED CARE PLAN</p><CarePlanEditor /></section>
-            </> : null}
+            </section> : null}
 
             <section className="side-panel phase-panel">
               <span className="phase-icon"><ShieldCheck size={17} /></span>
