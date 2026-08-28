@@ -50,6 +50,6 @@ describe.sequential("synthetic Foundation seed integration", () => {
     const [rows] = await testDb.query(
       "SELECT (SELECT COUNT(*) FROM clinics WHERE name = 'Harborview Family Clinic — Synthetic') AS clinics, (SELECT COUNT(*) FROM users WHERE openId LIKE 'synthetic-%') AS users, (SELECT COUNT(*) FROM clinicMembers) AS memberships, (SELECT COUNT(*) FROM patients WHERE displayName = 'Maya Chen') AS patients, (SELECT COUNT(*) FROM careEntries WHERE content LIKE 'Synthetic %') AS entries, (SELECT COUNT(*) FROM tasks WHERE title = 'Synthetic: confirm scheduled check-in') AS tasks, (SELECT COUNT(*) FROM auditLogs WHERE action = 'synthetic_foundation_seeded') AS audits",
     );
-    expect((rows as Array<Record<string, number>>)[0]).toMatchObject({ clinics: 1, users: 4, memberships: 4, patients: 1, entries: 2, tasks: 1, audits: 1 });
+    expect((rows as Array<Record<string, number>>)[0]).toMatchObject({ clinics: 1, users: 4, memberships: 4, patients: 1, entries: 3, tasks: 1, audits: 1 });
   });
 });

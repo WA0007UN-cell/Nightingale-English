@@ -3,7 +3,7 @@ import type { ClinicMembership, ScopedPatient } from "../../authz/clinicScope";
 export type WorkspaceEntry = {
   id: number; clinicId: number; patientId: number; authorRole: "Clinician" | "Staff" | "Patient" | "System";
   entryType: "clinician" | "staff" | "escalation" | "patient" | "system" | "ai"; visibility: "clinic" | "patient";
-  reviewState: "not_required" | "review_required" | "approved" | "rejected"; content: string; occurredAt: Date;
+  reviewState: "not_required" | "review_required" | "reviewed" | "resolved" | "approved" | "rejected"; content: string; occurredAt: Date;
 };
 export type WorkspaceTask = {
   id: number; clinicId: number; patientId: number; title: string;

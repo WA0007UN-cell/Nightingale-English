@@ -47,6 +47,15 @@
 - [x] Prove clinic-only escalation and clinic-only source records remain absent from Patient workspace reads, and deny Patient access to the Staff escalation context route.
 - [x] Verify migration replay, deterministic seed compatibility, Staff browser creation/source navigation, server validation, and source-link behaviour.
 
+## P2-C01 to P2-C06 — Clinician review and versioned Care Plan
+
+- [x] Add a Clinician-only pending Staff escalation review queue with `review_required → reviewed → resolved` transitions and immutable audit entries.
+- [x] Add Clinician-only Care Plan sections with immutable snapshots and strict server-side FORBIDDEN responses for Staff, Patient, and Admin mutations.
+- [x] Add a deterministic `baseVersion` compare-and-swap edit path that rejects stale submissions with a conflict response.
+- [x] Add version history and a non-destructive revert that creates a new incremented version without deleting historical snapshots.
+- [x] Add deterministic synthetic Care Plan and pending escalation fixtures, plus full migration replay/seed compatibility coverage.
+- [x] Verify the synthetic Clinician preview, review queue transitions, Care Plan edit, history, safe revert, Patient isolation, and automated concurrency boundary coverage.
+
 ## P2-F02 to P2-F06 — clinic-scoped persisted workspace foundation
 
 - [x] Add a server-only Drizzle/MySQL connection module with clean close handling.

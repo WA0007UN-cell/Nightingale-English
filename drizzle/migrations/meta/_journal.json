@@ -22,6 +22,13 @@
       "when": 1787888504875,
       "tag": "0002_robust_nebula",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1787890733388,
+      "tag": "0003_clumsy_gamma_corps",
+      "breakpoints": true
     }
   ]
 }

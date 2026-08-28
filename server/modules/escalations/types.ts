@@ -16,6 +16,10 @@ export type StaffEscalation = {
   occurredAt: Date;
 };
 
+export type ReviewQueueEscalation = StaffEscalation & {
+  reviewState: "review_required" | "reviewed" | "resolved";
+};
+
 export type EscalationReader = {
   getMembership(userId: number, clinicId: number): Promise<ClinicMembership | undefined>;
   getPatient(patientId: number, clinicId: number): Promise<ScopedPatient | undefined>;
@@ -41,6 +45,14 @@ export type EscalationWriter = EscalationReader & {
     targetId: number;
     metadata: Record<string, unknown>;
   }): Promise<void>;
+  listReviewQueue(clinicId: number): Promise<ReviewQueueEscalation[]>;
+  getReviewQueueEscalation(clinicId: number, escalationId: number): Promise<ReviewQueueEscalation | undefined>;
+  updateReviewState(input: {
+    clinicId: number;
+    escalationId: number;
+    currentState: "review_required" | "reviewed" | "resolved";
+    nextState: "reviewed" | "resolved";
+  }): Promise<ReviewQueueEscalation | undefined>;
 };
 
 export type StaffEscalationContext = { escalations: StaffEscalation[]; sourceEntries: EscalationSourceEntry[]; retrievedAt: Date };

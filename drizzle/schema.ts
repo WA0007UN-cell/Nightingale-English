@@ -74,7 +74,7 @@ export const careEntries = mysqlTable(
     authorRole: mysqlEnum("authorRole", ["Clinician", "Staff", "Patient", "System"]).notNull(),
     entryType: mysqlEnum("entryType", ["clinician", "staff", "escalation", "patient", "system", "ai"]).notNull(),
     visibility: mysqlEnum("visibility", ["clinic", "patient"]).default("clinic").notNull(),
-    reviewState: mysqlEnum("reviewState", ["not_required", "review_required", "approved", "rejected"]).default("not_required").notNull(),
+    reviewState: mysqlEnum("reviewState", ["not_required", "review_required", "reviewed", "resolved", "approved", "rejected"]).default("not_required").notNull(),
     content: text("content").notNull(),
     occurredAt: timestamp("occurredAt").notNull(),
     createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -104,6 +104,47 @@ export const tasks = mysqlTable(
   (table) => [
     index("tasks_clinic_patient_index").on(table.clinicId, table.patientId),
     index("tasks_assignee_status_index").on(table.assigneeUserId, table.status),
+  ],
+);
+
+/** Clinician-owned current content. currentVersion is compared on every edit to prevent silent overwrite. */
+export const carePlanSections = mysqlTable(
+  "carePlanSections",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    clinicId: int("clinicId").notNull().references(() => clinics.id),
+    patientId: int("patientId").notNull().references(() => patients.id),
+    sectionKey: mysqlEnum("sectionKey", ["follow_up_plan"]).notNull(),
+    content: text("content").notNull(),
+    currentVersion: int("currentVersion").notNull(),
+    updatedByUserId: int("updatedByUserId").notNull().references(() => users.id),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("care_plan_section_clinic_patient_key_unique").on(table.clinicId, table.patientId, table.sectionKey),
+    index("care_plan_sections_clinic_patient_index").on(table.clinicId, table.patientId),
+  ],
+);
+
+/** Append-only history: edits and reverts both create a new version record; existing versions are never overwritten. */
+export const carePlanSectionVersions = mysqlTable(
+  "carePlanSectionVersions",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    clinicId: int("clinicId").notNull().references(() => clinics.id),
+    patientId: int("patientId").notNull().references(() => patients.id),
+    sectionId: int("sectionId").notNull().references(() => carePlanSections.id),
+    versionNumber: int("versionNumber").notNull(),
+    content: text("content").notNull(),
+    changeType: mysqlEnum("changeType", ["seed", "edit", "revert"]).notNull(),
+    revertedFromVersion: int("revertedFromVersion"),
+    changedByUserId: int("changedByUserId").notNull().references(() => users.id),
+    createdAt: timestamp("createdAt").defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("care_plan_section_versions_section_number_unique").on(table.sectionId, table.versionNumber),
+    index("care_plan_versions_clinic_patient_section_index").on(table.clinicId, table.patientId, table.sectionId),
   ],
 );
 

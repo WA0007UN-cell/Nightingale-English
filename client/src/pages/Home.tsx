@@ -27,6 +27,8 @@ import { BrandMark } from "@/components/BrandMark";
 import { DemoLogin } from "@/components/DemoLogin";
 import { GlanceCard } from "@/components/GlanceCard";
 import { PersistedFoundationStatus } from "@/components/PersistedFoundationStatus";
+import { CarePlanEditor } from "@/components/clinician/CarePlanEditor";
+import { ReviewQueue } from "@/components/clinician/ReviewQueue";
 import { AssignedTaskList } from "@/components/staff/AssignedTaskList";
 import { EscalationComposer } from "@/components/staff/EscalationComposer";
 import { TaskList } from "@/components/TaskList";
@@ -295,6 +297,11 @@ export default function Home() {
               )}
               <button className="side-panel-link" type="button" onClick={() => showPlannedFeature(role === "Patient" ? "Shared care plan" : role === "Admin" ? "Governance log" : "Task board")}>{role === "Patient" ? "Open shared plan" : role === "Admin" ? "Open governance log" : "Open task board"} <span>→</span></button>
             </section>
+
+            {role === "Clinician" ? <>
+              <section className="side-panel clinician-panel"><p className="eyebrow">PENDING REVIEW</p><h3>Staff escalations</h3><ReviewQueue /></section>
+              <section className="side-panel clinician-panel"><p className="eyebrow">PROTECTED CARE PLAN</p><CarePlanEditor /></section>
+            </> : null}
 
             <section className="side-panel phase-panel">
               <span className="phase-icon"><ShieldCheck size={17} /></span>
