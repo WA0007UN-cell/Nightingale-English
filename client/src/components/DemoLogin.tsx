@@ -1,7 +1,7 @@
 /**
  * Care Canvas entry reminder: Phase 1 uses an explicit demo identity choice
  * instead of exposing a role switcher inside the patient workspace. This is a
- * visual demo boundary; server authentication and RBAC arrive in Phase 2.
+ * visual demo boundary; server-enforced workflows are introduced incrementally in Phase 2.
  */
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { useState } from "react";
@@ -67,7 +67,7 @@ export function DemoLogin({ onSignIn }: { onSignIn: (role: DemoRole) => void }) 
 
         <div className="demo-login-note">
           <ShieldCheck aria-hidden="true" size={17} />
-          <span>Phase 1 demo identity only. Server-enforced authentication and RBAC follow in Phase 2.</span>
+          <span>Role selection is a visual demo. Server-enforced workflows are introduced incrementally in Phase 2.</span>
         </div>
         <button className="demo-login-submit" type="button" onClick={() => onSignIn(selectedRole)}>
           Enter {roleMeta[selectedRole].shortLabel} workspace <ArrowRight aria-hidden="true" size={17} />

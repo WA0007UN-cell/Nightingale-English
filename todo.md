@@ -103,3 +103,12 @@
 
 - [x] Verify the Staff persisted task API with a real signed server session; the browser demo remains explicitly Phase 1 fallback without a real login session.
 - [x] Add user-visible mutation error handling for Staff task Start/Complete failures and focused UI coverage.
+
+- [x] Resolve the Staff preview boundary so the persisted Start/Complete path is understandable and verifiable without bypassing server authorisation.
+
+- [x] Add a second deterministic synthetic open Staff task fixture so the persisted preview can demonstrate Start/Complete after the earlier validation task is complete.
+
+- [x] Align the Staff preview clinic scope with the seeded synthetic clinic ID without weakening server-side clinic validation.
+- [x] Remove the Phase 1 local-task fallback from the Staff panel and show only authorised persisted tasks or a clear session-required state.
+- [x] Verify visible Start/Complete buttons update the database and remain updated after a browser refresh.
+- [x] Preserve one deterministic open synthetic Staff task after the verification flow so the refreshed preview still exposes the real Start button.

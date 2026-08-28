@@ -7,16 +7,20 @@ import { updateAssignedTaskStatus } from "./mutations";
 import { readAssignedStaffTasks } from "./read";
 import { createDbTaskWriter } from "./repository";
 
-const clinicInput = z.object({ clinicId: z.number().int().positive() });
-const updateInput = clinicInput.extend({
+const updateInput = z.object({
   taskId: z.number().int().positive(),
   action: z.enum(["start", "complete"]),
 });
 
+function requireSessionClinicId(clinicId: number | undefined) {
+  if (!clinicId) throw new TRPCError({ code: "FORBIDDEN", message: "An active clinic session is required for Staff tasks." });
+  return clinicId;
+}
+
 export const tasksRouter = router({
-  assigned: protectedProcedure.input(clinicInput).query(async ({ ctx, input }) => {
+  assigned: protectedProcedure.query(async ({ ctx }) => {
     try {
-      return await readAssignedStaffTasks(createDbTaskWriter(getDb()), ctx.actor.userId, input.clinicId);
+      return await readAssignedStaffTasks(createDbTaskWriter(getDb()), ctx.actor.userId, requireSessionClinicId(ctx.actor.clinicId));
     } catch (error) {
       if (error instanceof ClinicScopeError) throw new TRPCError({ code: "FORBIDDEN", message: error.message });
       throw error;
@@ -26,7 +30,7 @@ export const tasksRouter = router({
     try {
       return await updateAssignedTaskStatus(createDbTaskWriter(getDb()), {
         actorUserId: ctx.actor.userId,
-        clinicId: input.clinicId,
+        clinicId: requireSessionClinicId(ctx.actor.clinicId),
         taskId: input.taskId,
         action: input.action,
       });

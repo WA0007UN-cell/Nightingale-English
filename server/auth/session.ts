@@ -2,7 +2,7 @@ import type { Request } from "express";
 import { parseCookie } from "cookie";
 import { jwtVerify } from "jose";
 
-export type SessionActor = { userId: number };
+export type SessionActor = { userId: number; clinicId?: number };
 
 const SESSION_COOKIE = "nightingale_session";
 
@@ -29,7 +29,9 @@ export async function getActorFromSession(request: Request): Promise<SessionActo
   try {
     const { payload } = await jwtVerify(token, new TextEncoder().encode(secret));
     const userId = Number(payload.userId);
-    return Number.isInteger(userId) && userId > 0 ? { userId } : undefined;
+    const clinicId = Number(payload.clinicId);
+    if (!Number.isInteger(userId) || userId <= 0) return undefined;
+    return Number.isInteger(clinicId) && clinicId > 0 ? { userId, clinicId } : { userId };
   } catch {
     return undefined;
   }

@@ -101,9 +101,16 @@ export async function seedSyntheticFoundation() {
     content: "Synthetic shared instruction: review your next scheduled check-in with the care team.", occurredAt: syntheticFoundation.timestamps.clinicianEntry,
   });
 
-  const [existingTask] = await database.select().from(tasks).where(and(eq(tasks.clinicId, clinic.id), eq(tasks.patientId, patient.id), eq(tasks.title, "Synthetic: confirm scheduled check-in"))).limit(1);
-  if (!existingTask) {
-    await database.insert(tasks).values({ clinicId: clinic.id, patientId: patient.id, sourceEntryId: staffEntry.id, assigneeUserId: staff.id, title: "Synthetic: confirm scheduled check-in", status: "open", dueAt: syntheticFoundation.timestamps.taskDue });
+  const taskFixtures = [
+    { title: "Synthetic: confirm scheduled check-in", dueAt: syntheticFoundation.timestamps.taskDue },
+    { title: "Synthetic: review new patient update", dueAt: new Date("2026-02-18T17:00:00.000Z") },
+    { title: "Synthetic: verify medication follow-up", dueAt: new Date("2026-02-19T09:00:00.000Z") },
+  ];
+  for (const taskFixture of taskFixtures) {
+    const [existingTask] = await database.select().from(tasks).where(and(eq(tasks.clinicId, clinic.id), eq(tasks.patientId, patient.id), eq(tasks.title, taskFixture.title))).limit(1);
+    if (!existingTask) {
+      await database.insert(tasks).values({ clinicId: clinic.id, patientId: patient.id, sourceEntryId: staffEntry.id, assigneeUserId: staff.id, title: taskFixture.title, status: "open", dueAt: taskFixture.dueAt });
+    }
   }
 
   const [existingAudit] = await database.select().from(auditLogs).where(and(eq(auditLogs.clinicId, clinic.id), eq(auditLogs.patientId, patient.id), eq(auditLogs.action, "synthetic_foundation_seeded"))).limit(1);
@@ -114,7 +121,7 @@ export async function seedSyntheticFoundation() {
     });
   }
 
-  return { clinicId: clinic.id, patientId: patient.id, entryCount: 2, taskCount: 1 };
+  return { clinicId: clinic.id, patientId: patient.id, entryCount: 2, taskCount: taskFixtures.length };
 }
 
 const isDirectRun = process.argv[1]?.endsWith("seedDemo.ts");

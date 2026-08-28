@@ -32,7 +32,7 @@ describe("TaskStatusButton", () => {
   });
 
   it("renders Start for an open task", () => {
-    expect(renderToStaticMarkup(<TaskStatusButton clinicId={10} task={task} />)).toContain("Start");
+    expect(renderToStaticMarkup(<TaskStatusButton task={task} />)).toContain("Start");
   });
 
   it("renders a user-visible server error notice for a forbidden failure", () => {
