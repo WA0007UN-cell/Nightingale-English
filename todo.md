@@ -38,6 +38,15 @@
 - [x] Add focused tests for task read scope, invalid updates, valid transitions, audit events, and preview-token production rejection.
 - [x] Provide a short-lived development-only synthetic Staff preview token held in the current browser tab; production rejects this token path.
 
+## P2-S03 to P2-S04 — Staff escalation and main Timeline source linking
+
+- [x] Add a server-authorised Staff synthetic escalation creation procedure with trimmed non-empty validation, clinic/patient/source scope checks, and an audit event.
+- [x] Add a nullable `careEntries.sourceEntryId` migration and preserve it as a same-clinic, same-patient Timeline reference.
+- [x] Add a Staff-only escalation composer that chooses an authorised persisted Timeline source and records an internal review-required escalation.
+- [x] Link each persisted escalation to the existing main Longitudinal timeline and reuse its focus/scroll treatment rather than a parallel source list.
+- [x] Prove clinic-only escalation and clinic-only source records remain absent from Patient workspace reads, and deny Patient access to the Staff escalation context route.
+- [x] Verify migration replay, deterministic seed compatibility, Staff browser creation/source navigation, server validation, and source-link behaviour.
+
 ## P2-F02 to P2-F06 — clinic-scoped persisted workspace foundation
 
 - [x] Add a server-only Drizzle/MySQL connection module with clean close handling.

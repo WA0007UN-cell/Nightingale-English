@@ -1,4 +1,4 @@
-import { index, int, json, mysqlEnum, mysqlTable, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/mysql-core";
+import { type AnyMySqlColumn, index, int, json, mysqlEnum, mysqlTable, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -69,9 +69,10 @@ export const careEntries = mysqlTable(
     id: int("id").autoincrement().primaryKey(),
     clinicId: int("clinicId").notNull().references(() => clinics.id),
     patientId: int("patientId").notNull().references(() => patients.id),
+    sourceEntryId: int("sourceEntryId").references((): AnyMySqlColumn => careEntries.id),
     authorUserId: int("authorUserId").references(() => users.id),
     authorRole: mysqlEnum("authorRole", ["Clinician", "Staff", "Patient", "System"]).notNull(),
-    entryType: mysqlEnum("entryType", ["clinician", "staff", "patient", "system", "ai"]).notNull(),
+    entryType: mysqlEnum("entryType", ["clinician", "staff", "escalation", "patient", "system", "ai"]).notNull(),
     visibility: mysqlEnum("visibility", ["clinic", "patient"]).default("clinic").notNull(),
     reviewState: mysqlEnum("reviewState", ["not_required", "review_required", "approved", "rejected"]).default("not_required").notNull(),
     content: text("content").notNull(),
@@ -81,6 +82,7 @@ export const careEntries = mysqlTable(
   (table) => [
     index("care_entries_clinic_patient_time_index").on(table.clinicId, table.patientId, table.occurredAt),
     index("care_entries_patient_visibility_index").on(table.patientId, table.visibility),
+    index("care_entries_clinic_patient_source_index").on(table.clinicId, table.patientId, table.sourceEntryId),
   ],
 );
 
