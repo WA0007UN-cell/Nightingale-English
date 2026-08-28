@@ -2,9 +2,10 @@ import type { Request } from "express";
 import { parseCookie } from "cookie";
 import { jwtVerify } from "jose";
 
-export type SessionActor = { userId: number };
+export type SessionActor = { userId: number; clinicId?: number };
 
 const SESSION_COOKIE = "nightingale_session";
+const PREVIEW_TOKEN_HEADER = "x-nightingale-preview-token";
 
 function readTestActor(request: Request): SessionActor | undefined {
   if (process.env.NODE_ENV !== "test" && !process.env.VITEST) return undefined;
@@ -22,14 +23,32 @@ export async function getActorFromSession(request: Request): Promise<SessionActo
   const testActor = readTestActor(request);
   if (testActor) return testActor;
 
-  const token = parseCookie(request.headers.cookie ?? "")[SESSION_COOKIE];
   const secret = process.env.JWT_SECRET;
-  if (!token || !secret) return undefined;
+  if (!secret) return undefined;
+
+  const previewToken = request.header(PREVIEW_TOKEN_HEADER);
+  if (process.env.NODE_ENV !== "production" && previewToken) {
+    try {
+      const { payload } = await jwtVerify(previewToken, new TextEncoder().encode(secret));
+      const userId = Number(payload.userId);
+      const clinicId = Number(payload.clinicId);
+      if (payload.preview === "synthetic_staff" && Number.isInteger(userId) && userId > 0 && Number.isInteger(clinicId) && clinicId > 0) {
+        return { userId, clinicId };
+      }
+    } catch {
+      return undefined;
+    }
+  }
+
+  const token = parseCookie(request.headers.cookie ?? "")[SESSION_COOKIE];
+  if (!token) return undefined;
 
   try {
     const { payload } = await jwtVerify(token, new TextEncoder().encode(secret));
     const userId = Number(payload.userId);
-    return Number.isInteger(userId) && userId > 0 ? { userId } : undefined;
+    const clinicId = Number(payload.clinicId);
+    if (!Number.isInteger(userId) || userId <= 0) return undefined;
+    return Number.isInteger(clinicId) && clinicId > 0 ? { userId, clinicId } : { userId };
   } catch {
     return undefined;
   }

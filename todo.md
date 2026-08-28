@@ -30,6 +30,14 @@
 - [ ] Add persistent comments, mentions, tasks, section versions, reverts, and audit logs.
 - [ ] Add optimistic concurrency using baseVersion.
 
+## P2-S01 to P2-S02 — Staff assigned tasks and status transitions
+
+- [x] Add a server-authorised Staff task list limited to the current signed actor, their clinic scope, and open/in-progress tasks.
+- [x] Add Staff-only Start/Complete transitions with assignee, clinic, and allowed-transition validation plus audit events.
+- [x] Replace the Staff local task fallback with an authorised persisted task panel, loading/error/empty states, and mutation feedback.
+- [x] Add focused tests for task read scope, invalid updates, valid transitions, audit events, and preview-token production rejection.
+- [x] Provide a short-lived development-only synthetic Staff preview token held in the current browser tab; production rejects this token path.
+
 ## P2-F02 to P2-F06 — clinic-scoped persisted workspace foundation
 
 - [x] Add a server-only Drizzle/MySQL connection module with clean close handling.

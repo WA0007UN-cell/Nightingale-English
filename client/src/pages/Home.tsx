@@ -27,6 +27,7 @@ import { BrandMark } from "@/components/BrandMark";
 import { DemoLogin } from "@/components/DemoLogin";
 import { GlanceCard } from "@/components/GlanceCard";
 import { PersistedFoundationStatus } from "@/components/PersistedFoundationStatus";
+import { AssignedTaskList } from "@/components/staff/AssignedTaskList";
 import { TaskList } from "@/components/TaskList";
 import { TimelineEntry } from "@/components/TimelineEntry";
 import { getRoleCards, getRoleTasks, getRoleTimeline } from "@/lib/roleAccess";
@@ -106,7 +107,7 @@ export default function Home() {
     setRole(nextRole);
     setFocusedEntryId(null);
     toast.message(`Signed in as ${roleMembers[nextRole].name}`, {
-      description: "This Phase 1 demo shows one role at a time. Server-enforced access follows in Phase 2.",
+      description: "Role selection is a visual demo. Server-enforced workflows are introduced incrementally in Phase 2.",
     });
   }
 
@@ -117,7 +118,7 @@ export default function Home() {
 
   function showPlannedFeature(feature: string) {
     toast.info(`${feature} is planned`, {
-      description: "This Phase 1 demo keeps the product flow visible; persistent workflows follow in Phase 2.",
+      description: "This visual demo keeps the product flow visible while persistent workflows are introduced incrementally in Phase 2.",
     });
   }
 
@@ -232,8 +233,10 @@ export default function Home() {
 
           <aside className="context-rail" aria-label="Supporting care context">
             <section className="side-panel today-panel">
-              <div className="panel-heading compact"><div><p className="eyebrow">{role === "Patient" ? "SHARED CARE" : role === "Admin" ? "GOVERNANCE" : "ACTIVE WORK"}</p><h2>{role === "Patient" ? "Your next steps" : role === "Admin" ? "Review queue" : "My tasks"}</h2></div><span className="count-badge">{roleTasks.length}</span></div>
-              {roleTasks.length > 0 ? (
+              <div className="panel-heading compact"><div><p className="eyebrow">{role === "Patient" ? "SHARED CARE" : role === "Admin" ? "GOVERNANCE" : role === "Staff" ? "PERSISTED TASKS" : "ACTIVE WORK"}</p><h2>{role === "Patient" ? "Your next steps" : role === "Admin" ? "Review queue" : "My tasks"}</h2></div><span className="count-badge">{role === "Staff" ? "Live" : roleTasks.length}</span></div>
+              {role === "Staff" ? (
+                <AssignedTaskList />
+              ) : roleTasks.length > 0 ? (
                 <TaskList tasks={roleTasks} onOpenTask={(task) => toast.message(task.title, { description: `${task.status} · ${task.assignee} · ${task.due}` })} />
               ) : (
                 <div className="task-empty">
@@ -254,7 +257,7 @@ export default function Home() {
 
             <section className="side-panel phase-panel">
               <span className="phase-icon"><ShieldCheck size={17} /></span>
-              <div><strong>Phase 1 demo boundary</strong><p>Role switching is visual only. Server-enforced access follows in Phase 2.</p></div>
+              <div><strong>Demo identity boundary</strong><p>Role switching is visual only. Server-enforced workflows are introduced incrementally in Phase 2.</p></div>
             </section>
           </aside>
         </section>

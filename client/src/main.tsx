@@ -7,7 +7,20 @@ import { trpc } from "./lib/trpc";
 import "./index.css";
 
 const queryClient = new QueryClient();
-const trpcClient = trpc.createClient({ links: [httpBatchLink({ url: "/api/trpc", transformer: superjson })] });
+const STAFF_PREVIEW_TOKEN_KEY = "nightingale_staff_preview_token";
+const trpcClient = trpc.createClient({
+  links: [
+    httpBatchLink({
+      url: "/api/trpc",
+      transformer: superjson,
+      headers() {
+        if (!import.meta.env.DEV) return {};
+        const token = window.sessionStorage.getItem(STAFF_PREVIEW_TOKEN_KEY);
+        return token ? { "x-nightingale-preview-token": token } : {};
+      },
+    }),
+  ],
+});
 
 createRoot(document.getElementById("root")!).render(
   <trpc.Provider client={trpcClient} queryClient={queryClient}>
