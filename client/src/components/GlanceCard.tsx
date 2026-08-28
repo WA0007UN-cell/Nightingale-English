@@ -18,10 +18,6 @@ interface GlanceCardProps {
   onOpenSource?: (entryId: string) => void;
 }
 
-function renderClinicalEntities(text: string) {
-  const parts = text.split(/(Acetaminophen|Rash|Care Plan)/gi);
-  return parts.map((part, index) => /^(Acetaminophen|Rash|Care Plan)$/i.test(part) ? <strong className="clinical-entity" key={`${part}-${index}`}>{part}</strong> : part);
-}
 
 export function GlanceCard({ card, primary = false, onOpenSource }: GlanceCardProps) {
   const config = severityConfig[card.severity];
@@ -38,8 +34,8 @@ export function GlanceCard({ card, primary = false, onOpenSource }: GlanceCardPr
       </div>
 
       <div className="glance-card-copy">
-        <h3>{renderClinicalEntities(card.title)}</h3>
-        <p>{renderClinicalEntities(card.reason)}</p>
+        <h3>{card.title}</h3>
+        <p>{card.reason}</p>
       </div>
 
       <div className="glance-card-footer">
