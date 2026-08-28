@@ -34,3 +34,38 @@ export function assertCanReadPatientWorkspace(input: { actorUserId: number; memb
 export function isEntryVisibleToRole(entry: ScopedEntry, role: ClinicRole) {
   return role !== "Patient" || entry.visibility === "patient";
 }
+
+export type StaffTaskScope = {
+  clinicId: number;
+  assigneeUserId: number | null;
+  status: "open" | "in_progress" | "complete" | "cancelled";
+};
+
+export function assertStaffCanReadAssignedTasks(membership: ClinicMembership | undefined, actorUserId: number, clinicId: number) {
+  if (!membership || membership.userId !== actorUserId || membership.clinicId !== clinicId || membership.role !== "Staff") {
+    throw new ClinicScopeError("Only a Staff member of this clinic may read assigned tasks.");
+  }
+  return membership;
+}
+
+export function assertStaffCanUpdateTask(input: {
+  membership: ClinicMembership | undefined;
+  actorUserId: number;
+  task: StaffTaskScope | undefined;
+  clinicId: number;
+  assigneeUserId: number;
+}) {
+  const { membership, actorUserId, task, clinicId, assigneeUserId } = input;
+  if (!membership || membership.userId !== actorUserId || membership.clinicId !== clinicId || membership.role !== "Staff") {
+    throw new ClinicScopeError("Only a Staff member of this clinic may update tasks.");
+  }
+  if (!task || task.clinicId !== clinicId || task.assigneeUserId !== assigneeUserId) {
+    throw new ClinicScopeError("A Staff member may update only their own clinic-scoped task.");
+  }
+  return membership;
+}
+
+export function assertAllowedTaskTransition(current: StaffTaskScope["status"], next: "in_progress" | "complete") {
+  if ((current === "open" && next === "in_progress") || (current === "in_progress" && next === "complete")) return;
+  throw new ClinicScopeError(`Task transition ${current} → ${next} is not allowed.`);
+}

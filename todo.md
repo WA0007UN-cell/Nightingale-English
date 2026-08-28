@@ -92,3 +92,14 @@
 ## Development environment maintenance
 
 - [x] Fix the Vite development hot-reload WebSocket connection after the Express/tRPC server integration.
+
+## Phase 2 Staff role — assigned tasks and status transitions
+
+- [x] P2-S01: Add a server-authorised Staff assigned-task read path limited to the current user, clinic, and open/in-progress statuses.
+- [x] P2-S02: Add Staff-only Start/Complete task transitions with assignee validation, allowed-transition checks, and audit logging.
+- [x] Add focused tests for Staff task reads, cross-clinic/incorrect-assignee denial, valid transitions, invalid transitions, and audit events.
+- [x] Add the minimal Staff task UI with loading, error, empty, Start, and Complete states without adding escalation or Care Plan editing.
+- [ ] Await user confirmation after the Staff task loop and final changed-file review before commit.
+
+- [x] Verify the Staff persisted task API with a real signed server session; the browser demo remains explicitly Phase 1 fallback without a real login session.
+- [x] Add user-visible mutation error handling for Staff task Start/Complete failures and focused UI coverage.

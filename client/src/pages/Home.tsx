@@ -27,6 +27,7 @@ import { BrandMark } from "@/components/BrandMark";
 import { DemoLogin } from "@/components/DemoLogin";
 import { GlanceCard } from "@/components/GlanceCard";
 import { PersistedFoundationStatus } from "@/components/PersistedFoundationStatus";
+import { AssignedTaskList } from "@/components/staff/AssignedTaskList";
 import { TaskList } from "@/components/TaskList";
 import { TimelineEntry } from "@/components/TimelineEntry";
 import { getRoleCards, getRoleTasks, getRoleTimeline } from "@/lib/roleAccess";
@@ -233,7 +234,13 @@ export default function Home() {
           <aside className="context-rail" aria-label="Supporting care context">
             <section className="side-panel today-panel">
               <div className="panel-heading compact"><div><p className="eyebrow">{role === "Patient" ? "SHARED CARE" : role === "Admin" ? "GOVERNANCE" : "ACTIVE WORK"}</p><h2>{role === "Patient" ? "Your next steps" : role === "Admin" ? "Review queue" : "My tasks"}</h2></div><span className="count-badge">{roleTasks.length}</span></div>
-              {roleTasks.length > 0 ? (
+              {role === "Staff" ? (
+                <AssignedTaskList
+                  clinicId={1}
+                  fallbackTasks={roleTasks}
+                  onFallbackOpen={(task) => toast.message(task.title, { description: `${task.status} · ${task.assignee} · ${task.due}` })}
+                />
+              ) : roleTasks.length > 0 ? (
                 <TaskList tasks={roleTasks} onOpenTask={(task) => toast.message(task.title, { description: `${task.status} · ${task.assignee} · ${task.due}` })} />
               ) : (
                 <div className="task-empty">

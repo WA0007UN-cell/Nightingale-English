@@ -2,6 +2,7 @@ import { desc } from "drizzle-orm";
 import { auditLogs } from "../drizzle/schema";
 import { getDb } from "./db";
 import { workspaceRouter } from "./modules/workspace/router";
+import { tasksRouter } from "./modules/tasks/router";
 import { publicProcedure, router } from "./trpc";
 
 /** This non-sensitive status proves persistence is reachable without returning patient records. */
@@ -11,5 +12,5 @@ const foundationRouter = router({
     return { storage: "connected" as const, observedAt: latestAudit?.createdAt ?? new Date(), syntheticOnly: true };
   }),
 });
-export const appRouter = router({ foundation: foundationRouter, workspace: workspaceRouter });
+export const appRouter = router({ foundation: foundationRouter, workspace: workspaceRouter, tasks: tasksRouter });
 export type AppRouter = typeof appRouter;
