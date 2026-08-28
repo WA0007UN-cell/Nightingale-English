@@ -172,4 +172,4 @@
 - [x] Enforce Patient server responses to include only patient-visible approved records and omit internal fields.
 - [x] Add a minimal Patient Next Steps view using the protected tRPC response.
 - [x] Add focused Vitest coverage proving Patient cannot retrieve internal Staff notes or raw escalations.
-- [ ] Run the focused and full test suites, TypeScript check, and production build; commit and push the Patient slice.
+- [x] Run the focused and full test suites, TypeScript check, and production build; commit and push the Patient slice.
