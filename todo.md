@@ -162,8 +162,14 @@
 
 ## Phase 2 Patient/Admin privacy and governance wrap-up
 
-- [ ] P2-P01/P2-P02: Return only patient-visible approved entries and explicit next steps to Patient, omitting internal notes, escalations, unapproved AI outputs, and risk scores at the server boundary.
+- [x] P2-P01/P2-P02: Return only patient-visible approved entries and explicit next steps to Patient, omitting internal notes, escalations, unapproved AI outputs, and risk scores at the server boundary.
 - [ ] P2-A01/P2-A02: Add an Admin-only, clinic-scoped governance summary and audit-event detail drawer limited to immutable, non-clinical metadata.
 - [ ] Add focused tests for Patient response redaction, Admin governance metadata redaction, four-role access boundaries, and cross-clinic 403 denials.
 - [ ] Verify Patient and Admin interface flows in the browser without displaying protected content.
 - [ ] Run the full regression suite, TypeScript check, production build, file audit, requested Git commit, and GitHub push for P2-P01 through P2-A02.
+
+## Phase 2 Patient privacy shield — P2-P01/P2-P02
+- [x] Enforce Patient server responses to include only patient-visible approved records and omit internal fields.
+- [x] Add a minimal Patient Next Steps view using the protected tRPC response.
+- [x] Add focused Vitest coverage proving Patient cannot retrieve internal Staff notes or raw escalations.
+- [ ] Run the focused and full test suites, TypeScript check, and production build; commit and push the Patient slice.

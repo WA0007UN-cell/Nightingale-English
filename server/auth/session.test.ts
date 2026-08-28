@@ -33,6 +33,18 @@ describe("development synthetic Staff preview token", () => {
     await expect(getActorFromSession(requestWithPreviewToken(token))).resolves.toEqual({ userId: 71, clinicId: 90001 });
   });
 
+  it("accepts a signed Patient preview token only outside production", async () => {
+    process.env.NODE_ENV = "development";
+    process.env.JWT_SECRET = "test-preview-secret";
+    const token = await new SignJWT({ userId: "72", clinicId: "90001", preview: "synthetic_patient" })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("10m")
+      .sign(new TextEncoder().encode(process.env.JWT_SECRET));
+
+    await expect(getActorFromSession(requestWithPreviewToken(token))).resolves.toEqual({ userId: 72, clinicId: 90001 });
+  });
+
   it("rejects the development preview token in production", async () => {
     process.env.NODE_ENV = "production";
     process.env.JWT_SECRET = "test-preview-secret";

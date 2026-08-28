@@ -27,7 +27,7 @@ async function startServer() {
   if (!isProduction) {
     // Development-only fixture logins are restricted to known synthetic seed users.
     // The generated token is still verified in server/auth/session.ts before every tRPC procedure.
-    const createPreviewSession = (pathName: string, openId: string, role: "Staff" | "Clinician", preview: "synthetic_staff" | "synthetic_clinician") => {
+    const createPreviewSession = (pathName: string, openId: string, role: "Staff" | "Clinician" | "Patient", preview: "synthetic_staff" | "synthetic_clinician" | "synthetic_patient") => {
       app.all(pathName, async (_req, res) => {
         const secret = process.env.JWT_SECRET;
         if (!secret) return res.status(500).json({ error: "JWT_SECRET is not configured." });
@@ -65,6 +65,7 @@ async function startServer() {
       return res.json({ ok: true, syntheticOnly: true, previewToken: token });
     });
     createPreviewSession("/api/dev/clinician-session", "synthetic-clinician-ravi", "Clinician", "synthetic_clinician");
+    createPreviewSession("/api/dev/patient-session", "synthetic-patient-maya", "Patient", "synthetic_patient");
   }
 
   if (isProduction) {

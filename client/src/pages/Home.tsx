@@ -31,6 +31,7 @@ import { CarePlanEditor } from "@/components/clinician/CarePlanEditor";
 import { ReviewQueue } from "@/components/clinician/ReviewQueue";
 import { AssignedTaskList } from "@/components/staff/AssignedTaskList";
 import { EscalationComposer } from "@/components/staff/EscalationComposer";
+import { PatientNextSteps } from "@/components/patient/PatientNextSteps";
 import { TaskList } from "@/components/TaskList";
 import { TimelineEntry } from "@/components/TimelineEntry";
 import { getRoleCards, getRoleTasks, getRoleTimeline } from "@/lib/roleAccess";
@@ -320,23 +321,22 @@ export default function Home() {
           </div>
 
           <aside className="context-rail" aria-label="Supporting care context">
-            {role !== "Staff" && role !== "Clinician" ? <section className="side-panel today-panel">
-              <div className="panel-heading compact"><div><p className="eyebrow">{role === "Patient" ? "SHARED CARE" : "GOVERNANCE"}</p><h2>{role === "Patient" ? "Your next steps" : "Review queue"}</h2></div><span className="count-badge">{roleTasks.length}</span></div>
+            {role === "Patient" ? <section className="side-panel today-panel">
+              <div className="panel-heading compact"><div><p className="eyebrow">SHARED CARE</p><h2>Your next steps</h2></div></div>
+              <PatientNextSteps />
+            </section> : role === "Admin" ? <section className="side-panel today-panel">
+              <div className="panel-heading compact"><div><p className="eyebrow">GOVERNANCE</p><h2>Review queue</h2></div><span className="count-badge">{roleTasks.length}</span></div>
               {roleTasks.length > 0 ? (
                 <TaskList tasks={roleTasks} onOpenTask={(task) => toast.message(task.title, { description: `${task.status} · ${task.assignee} · ${task.due}` })} />
               ) : (
                 <div className="task-empty">
-                  <strong>{role === "Patient" ? "No new shared steps" : "No open governance tasks"}</strong>
-                  <span>{role === "Patient" ? "Your care team will post approved actions here." : "Audit and access events are available in the governance area."}</span>
+                  <strong>No open governance tasks</strong>
+                  <span>Audit and access events are available in the governance area.</span>
                 </div>
               )}
-              <button className="side-panel-link" type="button" onClick={() => showPlannedFeature(role === "Patient" ? "Shared care plan" : role === "Admin" ? "Governance log" : "Task board")}>{role === "Patient" ? "Open shared plan" : role === "Admin" ? "Open governance log" : "Open task board"} <span>→</span></button>
+              <button className="side-panel-link" type="button" onClick={() => showPlannedFeature("Governance log")}>Open governance log <span>→</span></button>
             </section> : null}
 
-            <section className="side-panel phase-panel">
-              <span className="phase-icon"><ShieldCheck size={17} /></span>
-              <div><strong>Demo identity boundary</strong><p>Role switching is visual only. Server-enforced workflows are introduced incrementally in Phase 2.</p></div>
-            </section>
           </aside>
         </section>
       </main>
